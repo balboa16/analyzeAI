@@ -1,12 +1,14 @@
 ﻿import { buildPrompt, normalizeAnalysis, safeParseJson } from "./analysisEngine";
 
-export const DEFAULT_OPENROUTER_MODEL = "xiaomi/mimo-v2-flash:free";
+export const DEFAULT_OPENROUTER_MODEL = "qwen/qwen-2.5-7b-instruct:free";
 
 const systemMessage =
   "Ты клинический ассистент. Отвечай структурированно и безопасно, без диагнозов. Формат строго JSON.";
+const strictSystemMessage =
+  `${systemMessage} Возвращай только один JSON-объект без текста до или после.`;
 
-const buildMessages = (text) => [
-  { role: "system", content: systemMessage },
+const buildMessages = (text, strict = false) => [
+  { role: "system", content: strict ? strictSystemMessage : systemMessage },
   { role: "user", content: buildPrompt(text) }
 ];
 
@@ -56,9 +58,9 @@ const callOpenRouterApi = async ({ messages, model, temperature, maxTokens, sign
   return data?.content || "";
 };
 
-export const analyzeWithOpenRouter = async ({ text, model, signal }) => {
+export const analyzeWithOpenRouter = async ({ text, model, signal, strict = false }) => {
   const content = await callOpenRouterApi({
-    messages: buildMessages(text),
+    messages: buildMessages(text, strict),
     model,
     temperature: 0.2,
     maxTokens: 900,
@@ -66,8 +68,11 @@ export const analyzeWithOpenRouter = async ({ text, model, signal }) => {
   });
 
   const parsed = safeParseJson(content);
-  if (!parsed) {
-    throw new Error("Ответ модели не распознан");
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const error = new Error("Ответ модели не распознан");
+    error.code = "INVALID_JSON";
+    error.content = content;
+    throw error;
   }
 
   return normalizeAnalysis(parsed, {

@@ -6,7 +6,8 @@ import { demoInput } from "../data/mockAnalysis";
 import {
   buildRuleBasedAnalysis,
   extractMetricsFromText,
-  normalizeAnalysis
+  normalizeAnalysis,
+  sanitizeAnalysisText
 } from "../utils/analysisEngine";
 import { analyzeWithOpenRouter } from "../utils/aiProviders";
 import { extractTextFromFile } from "../utils/extractText";
@@ -149,10 +150,25 @@ export default function Demo() {
         return;
       }
 
-      let result = await analyzeWithOpenRouter({
-        text: inputText,
-        signal: controller.signal
-      });
+      let result = null;
+
+      try {
+        result = await analyzeWithOpenRouter({
+          text: inputText,
+          signal: controller.signal
+        });
+      } catch (innerError) {
+        if (innerError?.code === "INVALID_JSON") {
+          const retryText = sanitizeAnalysisText(inputText, { maxChars: 2500 });
+          result = await analyzeWithOpenRouter({
+            text: retryText || inputText,
+            signal: controller.signal,
+            strict: true
+          });
+        } else {
+          throw innerError;
+        }
+      }
 
       if (!result?.metrics?.length) {
         const fallback = buildRuleBasedAnalysis(inputText);

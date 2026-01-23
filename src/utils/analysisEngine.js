@@ -3,6 +3,7 @@
 const DEFAULT_TITLE = "Расшифровка анализов";
 const DEFAULT_CAUTION =
   "Рекомендации носят информационный характер и не заменяют консультацию врача.";
+const DEFAULT_TEXT_LIMIT = 5000;
 
 const isNumber = (value) => Number.isFinite(value);
 
@@ -112,6 +113,42 @@ export const extractMetricsFromText = (text) => {
     .filter(Boolean);
 };
 
+export const sanitizeAnalysisText = (text, options = {}) => {
+  if (!text) {
+    return "";
+  }
+
+  const maxChars = Number.isFinite(options.maxChars) ? options.maxChars : DEFAULT_TEXT_LIMIT;
+  const normalized = text.replace(/\r/g, "\n").replace(/[ \t]+/g, " ").trim();
+  const lines = normalized
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const importantLines = lines.filter(
+    (line) => /\d/.test(line) || /(ммоль|мкг|нг|мг|г\/л|ед\/л|iu|%)/i.test(line)
+  );
+
+  const chosen = importantLines.length ? importantLines : lines;
+  const unique = [];
+  const seen = new Set();
+
+  for (const line of chosen) {
+    const key = line.toLowerCase();
+    if (!seen.has(key)) {
+      unique.push(line);
+      seen.add(key);
+    }
+  }
+
+  let output = unique.join("\n");
+  if (output.length > maxChars) {
+    output = output.slice(0, maxChars);
+  }
+
+  return output;
+};
+
 const buildSummary = (metrics) => {
   if (!metrics.length) {
     return "Мы не смогли уверенно распознать показатели. Проверьте ввод или загрузите более четкий файл.";
@@ -207,7 +244,9 @@ export const buildRuleBasedAnalysis = (text) => {
   };
 };
 
-export const buildPrompt = (text) => `
+export const buildPrompt = (text) => {
+  const cleanedText = sanitizeAnalysisText(text);
+  return `
 Ты медицинский аналитик для массовой аудитории Кыргызстана.
 Верни СТРОГО валидный JSON без markdown и пояснений. Язык ответа: русский.
 Используй только двойные кавычки. Никаких комментариев или текста вне JSON.
@@ -244,8 +283,9 @@ export const buildPrompt = (text) => `
 - Не ставь диагнозы и не назначай лечение.
 
 Входной текст анализов:
-"""${text}"""
+"""${cleanedText}"""
 `;
+};
 
 export const safeParseJson = (input) => {
   if (!input) {
