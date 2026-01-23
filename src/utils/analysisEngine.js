@@ -74,10 +74,21 @@ const resolveNote = (value, range, item) => {
 
 const extractValue = (text, patterns) => {
   for (const pattern of patterns) {
-    const regex = new RegExp(`${pattern.source}\\s*[:=\\-–]?\\s*(\\d+(?:[\\.,]\\d+)?)`, "i");
-    const match = text.match(regex);
-    if (match) {
-      return normalizeNumber(match[1]);
+    const regex = new RegExp(pattern.source, "i");
+    const match = regex.exec(text);
+    if (!match) {
+      continue;
+    }
+
+    const startIndex = match.index + match[0].length;
+    const window = text.slice(startIndex, startIndex + 120);
+    const withoutRanges = window.replace(
+      /\\d+(?:[\\.,]\\d+)?\\s*[-–]\\s*\\d+(?:[\\.,]\\d+)?/g,
+      " "
+    );
+    const numberMatch = withoutRanges.match(/(\\d+(?:[\\.,]\\d+)?)/);
+    if (numberMatch) {
+      return normalizeNumber(numberMatch[1]);
     }
   }
 
@@ -125,11 +136,30 @@ export const sanitizeAnalysisText = (text, options = {}) => {
     .map((line) => line.trim())
     .filter(Boolean);
 
-  const importantLines = lines.filter(
-    (line) => /\d/.test(line) || /(ммоль|мкг|нг|мг|г\/л|ед\/л|iu|%)/i.test(line)
-  );
+  const unitRegex = /(ммоль|мкг|нг|мг|г\/л|ед\/л|iu|%)/i;
+  const keepIndices = new Set();
 
-  const chosen = importantLines.length ? importantLines : lines;
+  lines.forEach((line, index) => {
+    const hasDigits = /\\d/.test(line);
+    const hasUnits = unitRegex.test(line);
+    const hasMetricLabel = referenceRanges.some((item) =>
+      item.patterns.some((pattern) => pattern.test(line))
+    );
+
+    if (hasDigits || hasUnits || hasMetricLabel) {
+      keepIndices.add(index);
+      if (index > 0) {
+        keepIndices.add(index - 1);
+      }
+      if (index < lines.length - 1) {
+        keepIndices.add(index + 1);
+      }
+    }
+  });
+
+  const chosen = keepIndices.size
+    ? lines.filter((_, index) => keepIndices.has(index))
+    : lines;
   const unique = [];
   const seen = new Set();
 
