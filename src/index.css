@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f7f5f1;
+  --surface: #ffffff;
+  --ink: #0f2a2e;
+  --muted: #46626a;
+  --accent: #1f9d8c;
+  --accent-2: #f1a35f;
+  --accent-3: #6bb6e9;
+  --stroke: #d8e4e0;
+  --success: #1f9d8c;
+  --warning: #d89a3a;
+  --danger: #d55b5b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+section[id] {
+  scroll-margin-top: 96px;
+}
+
+::selection {
+  background: rgba(31, 157, 140, 0.25);
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Playfair Display", serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+}
+
+@layer components {
+  .section-pad {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(216, 228, 224, 0.7);
+    backdrop-filter: blur(16px);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-glow transition;
+    background: linear-gradient(135deg, #1f9d8c 0%, #2fb89c 45%, #3ac0a2 100%);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:disabled,
+  .btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-stroke px-6 py-3 text-sm font-semibold text-ink transition;
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-stroke bg-white/80 px-4 py-2 text-xs font-semibold text-muted;
+  }
+
+  .card {
+    @apply rounded-3xl border border-stroke bg-white px-6 py-6 shadow-card;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .page-shell {
+    background-image:
+      radial-gradient(circle at 10% 15%, rgba(107, 182, 233, 0.15), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(31, 157, 140, 0.18), transparent 48%),
+      radial-gradient(circle at 70% 90%, rgba(241, 163, 95, 0.12), transparent 55%);
+  }
+
+  .hero-gradient {
+    background-image: linear-gradient(135deg, rgba(31, 157, 140, 0.1), rgba(241, 163, 95, 0.08));
+  }
+
+  .floating-orb {
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(107, 182, 233, 0.2));
+  }
+}
