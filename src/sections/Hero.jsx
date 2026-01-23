@@ -9,7 +9,7 @@ const stats = [
 export default function Hero() {
   return (
     <section className="section-pad pt-20 md:pt-24" id="top">
-      <div className="container grid items-center gap-10 lg:grid-cols-[1.1fr,0.9fr]">
+      <div className="container grid gap-10 lg:grid-cols-[1.1fr,0.9fr] lg:items-start">
         <div className="flex flex-col gap-6">
           <span className="pill animate-fade-up" style={{ animationDelay: "0ms" }}>
             От врачей клиники в Бишкеке
@@ -94,7 +94,7 @@ export default function Hero() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div className="overflow-hidden rounded-3xl">
                 <img
-                  src="https://images.unsplash.com/photo-1580281657521-6bd49d1c95b3?auto=format&fit=crop&w=800&q=80"
+                  src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=900&q=80"
                   alt="Врач"
                   className="h-48 w-full object-cover"
                   loading="lazy"
@@ -102,7 +102,7 @@ export default function Hero() {
               </div>
               <div className="overflow-hidden rounded-3xl">
                 <img
-                  src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=800&q=80"
+                  src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80"
                   alt="Пациент"
                   className="h-48 w-full object-cover"
                   loading="lazy"

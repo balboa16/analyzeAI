@@ -21,14 +21,15 @@ npm run preview
 ## AI-расшифровка (OpenRouter)
 
 1. Получите API ключ на https://openrouter.ai
-2. Создайте `.env.local` и добавьте:
+2. Настройте переменные окружения (локально в `.env.local` или в Vercel):
 
 ```env
-VITE_OPENROUTER_API_KEY=ваш_ключ
+OPENROUTER_API_KEY=ваш_ключ
+OPENROUTER_MODEL=xiaomi/mimo-v2-flash:free
 ```
 
 3. Перезапустите `npm run dev`, если сервер уже был запущен.
-4. Модель по умолчанию — `xiaomi/mimo-v2-flash:free`. При необходимости замените через UI или переменную `VITE_OPENROUTER_MODEL`.
+4. В продакшене ключ хранится на сервере (Vercel Functions), в браузер не попадает.
 
 ## Ввод данных
 
@@ -48,6 +49,7 @@ VITE_OPENROUTER_API_KEY=ваш_ключ
 - `src/utils/aiProviders.js` — интеграция с OpenRouter
 - `src/utils/extractText.js` — извлечение текста из PDF/изображений
 - `src/utils/pdfReport.js` — генерация PDF-отчета
+- `api/openrouter.js` — серверный прокси для OpenRouter (ключ скрыт)
 
 ## Заметки
 

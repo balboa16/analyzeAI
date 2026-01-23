@@ -10,7 +10,7 @@ const buildMessages = (text) => [
   { role: "user", content: buildPrompt(text) }
 ];
 
-const parseOpenRouterError = async (response) => {
+const parseApiError = async (response) => {
   const raw = await response.text();
   let message = `OpenRouter недоступен (HTTP ${response.status})`;
 
@@ -33,68 +33,61 @@ const parseOpenRouterError = async (response) => {
   return error;
 };
 
-export const analyzeWithOpenRouter = async ({ text, model, apiKey, signal }) => {
-  if (!apiKey) {
-    throw new Error("Нужен API ключ OpenRouter");
-  }
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+const callOpenRouterApi = async ({ messages, model, temperature, maxTokens, signal }) => {
+  const response = await fetch("/api/openrouter", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-      "HTTP-Referer": window.location.origin,
-      "X-Title": "AnalizAI"
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: model || DEFAULT_OPENROUTER_MODEL,
-      messages: buildMessages(text),
-      temperature: 0.2
+      messages,
+      model,
+      temperature,
+      max_tokens: maxTokens
     }),
     signal
   });
 
   if (!response.ok) {
-    throw await parseOpenRouterError(response);
+    throw await parseApiError(response);
   }
 
   const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content || "";
-  const parsed = safeParseJson(content);
+  return data?.content || "";
+};
 
+export const analyzeWithOpenRouter = async ({ text, model, signal }) => {
+  const content = await callOpenRouterApi({
+    messages: buildMessages(text),
+    model,
+    temperature: 0.2,
+    maxTokens: 900,
+    signal
+  });
+
+  const parsed = safeParseJson(content);
   if (!parsed) {
     throw new Error("Ответ модели не распознан");
   }
 
-  return normalizeAnalysis(parsed, { provider: "OpenRouter", model: model || DEFAULT_OPENROUTER_MODEL });
+  return normalizeAnalysis(parsed, {
+    provider: "OpenRouter",
+    model: model || DEFAULT_OPENROUTER_MODEL
+  });
 };
 
-export const chatWithOpenRouter = async ({ messages, model, apiKey, signal }) => {
-  if (!apiKey) {
-    throw new Error("Нужен API ключ OpenRouter");
-  }
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-      "HTTP-Referer": window.location.origin,
-      "X-Title": "AnalizAI"
-    },
-    body: JSON.stringify({
-      model: model || DEFAULT_OPENROUTER_MODEL,
-      messages,
-      temperature: 0.3,
-      max_tokens: 700
-    }),
+export const chatWithOpenRouter = async ({ messages, model, signal }) => {
+  const content = await callOpenRouterApi({
+    messages,
+    model,
+    temperature: 0.3,
+    maxTokens: 700,
     signal
   });
 
-  if (!response.ok) {
-    throw await parseOpenRouterError(response);
+  if (!content) {
+    throw new Error("Пустой ответ модели");
   }
 
-  const data = await response.json();
-  return data?.choices?.[0]?.message?.content || "";
+  return content;
 };

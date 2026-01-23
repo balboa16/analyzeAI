@@ -8,7 +8,7 @@ import {
   extractMetricsFromText,
   normalizeAnalysis
 } from "../utils/analysisEngine";
-import { analyzeWithOpenRouter, DEFAULT_OPENROUTER_MODEL } from "../utils/aiProviders";
+import { analyzeWithOpenRouter } from "../utils/aiProviders";
 import { extractTextFromFile } from "../utils/extractText";
 import { generatePdfReport } from "../utils/pdfReport";
 
@@ -19,46 +19,9 @@ const tabs = [
 ];
 
 const MAX_FILE_SIZE_MB = 10;
-const LEGACY_MODELS = ["meta-llama/llama-3.1-8b-instruct:free"];
-
-const resolveStoredModel = (envModel) => {
-  if (typeof window === "undefined") {
-    return envModel;
-  }
-
-  const stored = window.localStorage.getItem("analizai_openrouter_model");
-  if (!stored || LEGACY_MODELS.includes(stored)) {
-    return envModel;
-  }
-
-  return stored;
-};
-
-const resolveStoredKey = (envKey) => {
-  if (typeof window === "undefined") {
-    return envKey;
-  }
-
-  if (envKey) {
-    return envKey;
-  }
-
-  return window.localStorage.getItem("analizai_openrouter_key") || "";
-};
 
 export default function Demo() {
-  const envOpenRouterKey =
-    typeof import.meta !== "undefined" && import.meta.env
-      ? import.meta.env.VITE_OPENROUTER_API_KEY || ""
-      : "";
-  const envOpenRouterModel =
-    typeof import.meta !== "undefined" && import.meta.env
-      ? import.meta.env.VITE_OPENROUTER_MODEL || DEFAULT_OPENROUTER_MODEL
-      : DEFAULT_OPENROUTER_MODEL;
-
   const [mode, setMode] = useState("file");
-  const [openRouterModel, setOpenRouterModel] = useState(() => resolveStoredModel(envOpenRouterModel));
-  const [openRouterKey, setOpenRouterKey] = useState(() => resolveStoredKey(envOpenRouterKey));
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
@@ -75,22 +38,6 @@ export default function Demo() {
   const [pdfLoading, setPdfLoading] = useState(false);
 
   const abortRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem("analizai_openrouter_model", openRouterModel);
-  }, [openRouterModel]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem("analizai_openrouter_key", openRouterKey);
-  }, [openRouterKey]);
 
   useEffect(() => {
     setAnalysis(null);
@@ -169,11 +116,6 @@ export default function Demo() {
     setAnalysisError("");
     setAnalysis(null);
 
-    if (!openRouterKey) {
-      setAnalysisError("Добавьте API ключ OpenRouter, чтобы запустить расшифровку.");
-      return;
-    }
-
     const controller = new AbortController();
     if (abortRef.current) {
       abortRef.current.abort();
@@ -186,13 +128,16 @@ export default function Demo() {
 
     const formatOpenRouterError = (error) => {
       if (error?.status === 401 || error?.status === 403) {
-        return "Неверный или заблокированный API ключ OpenRouter.";
+        return "Ключ OpenRouter не настроен или недействителен.";
       }
       if (error?.status === 429) {
         return "Превышен лимит запросов OpenRouter. Попробуйте позже.";
       }
-    if (error?.status === 404) {
-      return `Модель OpenRouter недоступна: ${openRouterModel}. Попробуйте другую модель.`;
+      if (error?.status === 404) {
+        return "Модель OpenRouter недоступна. Попробуйте другую модель.";
+      }
+      if (error?.message?.includes("not configured")) {
+        return "Ключ OpenRouter не задан на сервере. Проверьте переменные окружения.";
       }
       return error?.message || "Ошибка анализа";
     };
@@ -206,8 +151,6 @@ export default function Demo() {
 
       let result = await analyzeWithOpenRouter({
         text: inputText,
-        model: openRouterModel,
-        apiKey: openRouterKey,
         signal: controller.signal
       });
 
@@ -246,8 +189,6 @@ export default function Demo() {
 
     return extractMetricsFromText(extractedText);
   }, [extractedText]);
-
-  const hasKey = Boolean(openRouterKey);
 
   return (
     <section className="section-pad" id="demo">
@@ -349,56 +290,23 @@ export default function Demo() {
             </div>
           </div>
           <div className="rounded-3xl border border-stroke bg-white/80 p-6">
-            <p className="text-sm font-semibold text-ink">OpenRouter подключение</p>
+            <p className="text-sm font-semibold text-ink">AI включен по умолчанию</p>
             <p className="mt-2 text-xs text-muted">
-              Расшифровка работает через OpenRouter (бесплатные модели). Ключ хранится только в
-              вашем браузере.
+              Расшифровка работает автоматически через OpenRouter. Вам не нужно вводить ключ или
+              менять настройки.
             </p>
-            <div className="mt-3 flex items-center gap-2 text-xs text-muted">
-              <span className={`h-2 w-2 rounded-full ${hasKey ? "bg-emerald-500" : "bg-rose-500"}`} />
-              <span>{hasKey ? "Ключ подключен" : "Нужен API ключ"}</span>
-            </div>
-            <label
-              className="mt-4 grid gap-2 text-xs font-semibold text-ink"
-              htmlFor="openrouter-key"
-            >
-              API ключ OpenRouter
-              <input
-                id="openrouter-key"
-                type="password"
-                className="rounded-2xl border border-stroke bg-white px-4 py-3 text-sm text-ink"
-                value={openRouterKey}
-                onChange={(event) => setOpenRouterKey(event.target.value)}
-                placeholder="sk-or-..."
-              />
-            </label>
-            <details className="mt-4 rounded-2xl border border-stroke bg-white px-4 py-3 text-xs text-muted">
-              <summary className="cursor-pointer font-semibold text-ink">Настройки модели</summary>
-              <label className="mt-3 grid gap-2 text-xs font-semibold text-ink" htmlFor="openrouter-model">
-                Модель OpenRouter
-                <input
-                  id="openrouter-model"
-                  className="rounded-2xl border border-stroke bg-white px-4 py-3 text-sm text-ink"
-                  value={openRouterModel}
-                  onChange={(event) => setOpenRouterModel(event.target.value)}
-                />
-              </label>
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted">
-                <span>Текущая модель: {openRouterModel}</span>
-                {envOpenRouterModel ? (
-                  <button
-                    type="button"
-                    className="rounded-full border border-stroke px-3 py-1 text-xs font-semibold text-ink"
-                    onClick={() => setOpenRouterModel(envOpenRouterModel)}
-                  >
-                    Сбросить на {envOpenRouterModel}
-                  </button>
-                ) : null}
+            <div className="mt-4 grid gap-3 text-xs text-muted sm:grid-cols-2">
+              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
+                <p className="text-xs font-semibold text-ink">Безопасность</p>
+                <p className="mt-1 text-xs text-muted">
+                  Ключ хранится на сервере, в браузер не попадает.
+                </p>
               </div>
-              <p className="mt-2 text-[11px] text-muted">
-                Можно задать через `VITE_OPENROUTER_MODEL` в `.env.local`.
-              </p>
-            </details>
+              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
+                <p className="text-xs font-semibold text-ink">Скорость</p>
+                <p className="mt-1 text-xs text-muted">Ответ приходит за 10–30 секунд.</p>
+              </div>
+            </div>
           </div>
           <div className="rounded-3xl border border-stroke bg-white/80 p-6">
             <p className="text-sm font-semibold text-ink">Что вы получите</p>

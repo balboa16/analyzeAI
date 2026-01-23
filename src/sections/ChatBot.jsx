@@ -1,53 +1,13 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
 import SectionHeading from "../components/SectionHeading";
-import { chatWithOpenRouter, DEFAULT_OPENROUTER_MODEL } from "../utils/aiProviders";
+import { chatWithOpenRouter } from "../utils/aiProviders";
 
 const SYSTEM_PROMPT =
   "Ты медицинский консультант. Отвечай спокойно, без диагнозов и назначений. " +
   "Если данных мало — задавай уточняющие вопросы. Используй простой русский язык.";
 
-const LEGACY_MODELS = ["meta-llama/llama-3.1-8b-instruct:free"];
-
-const resolveStoredModel = (envModel) => {
-  if (typeof window === "undefined") {
-    return envModel;
-  }
-
-  const stored = window.localStorage.getItem("analizai_openrouter_model");
-  if (!stored || LEGACY_MODELS.includes(stored)) {
-    return envModel;
-  }
-
-  return stored;
-};
-
-const resolveStoredKey = (envKey) => {
-  if (typeof window === "undefined") {
-    return envKey;
-  }
-
-  if (envKey) {
-    return envKey;
-  }
-
-  return window.localStorage.getItem("analizai_openrouter_key") || "";
-};
-
 export default function ChatBot() {
-  const envOpenRouterKey =
-    typeof import.meta !== "undefined" && import.meta.env
-      ? import.meta.env.VITE_OPENROUTER_API_KEY || ""
-      : "";
-  const envOpenRouterModel =
-    typeof import.meta !== "undefined" && import.meta.env
-      ? import.meta.env.VITE_OPENROUTER_MODEL || DEFAULT_OPENROUTER_MODEL
-      : DEFAULT_OPENROUTER_MODEL;
-
-  const [openRouterKey, setOpenRouterKey] = useState(() => resolveStoredKey(envOpenRouterKey));
-  const [openRouterModel, setOpenRouterModel] = useState(() =>
-    resolveStoredModel(envOpenRouterModel)
-  );
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -63,22 +23,6 @@ export default function ChatBot() {
   const abortRef = useRef(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem("analizai_openrouter_key", openRouterKey);
-  }, [openRouterKey]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem("analizai_openrouter_model", openRouterModel);
-  }, [openRouterModel]);
-
-  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -86,13 +30,16 @@ export default function ChatBot() {
 
   const formatOpenRouterError = (err) => {
     if (err?.status === 401 || err?.status === 403) {
-      return "Неверный или заблокированный API ключ OpenRouter.";
+      return "Ключ OpenRouter не настроен или недействителен.";
     }
     if (err?.status === 429) {
       return "Превышен лимит запросов OpenRouter. Попробуйте позже.";
     }
     if (err?.status === 404) {
-      return `Модель OpenRouter недоступна: ${openRouterModel}. Попробуйте другую модель.`;
+      return "Модель OpenRouter недоступна. Попробуйте другую модель.";
+    }
+    if (err?.message?.includes("not configured")) {
+      return "Ключ OpenRouter не задан на сервере. Проверьте переменные окружения.";
     }
     return err?.message || "Ошибка запроса";
   };
@@ -100,11 +47,6 @@ export default function ChatBot() {
   const handleSend = async () => {
     const message = input.trim();
     if (!message || isSending) {
-      return;
-    }
-
-    if (!openRouterKey) {
-      setError("Добавьте API ключ OpenRouter, чтобы чат работал.");
       return;
     }
 
@@ -124,14 +66,8 @@ export default function ChatBot() {
     try {
       const reply = await chatWithOpenRouter({
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...nextMessages],
-        model: openRouterModel,
-        apiKey: openRouterKey,
         signal: controller.signal
       });
-
-      if (!reply) {
-        throw new Error("Пустой ответ модели");
-      }
 
       setMessages([...nextMessages, { role: "assistant", content: reply }]);
     } catch (err) {
@@ -158,45 +94,20 @@ export default function ChatBot() {
             subtitle="Напишите вопрос о вашем самочувствии или уточните показатели — бот ответит на человеческом языке."
           />
           <div className="rounded-3xl border border-stroke bg-white/80 p-6">
-            <p className="text-sm font-semibold text-ink">Настройки OpenRouter</p>
-            <label className="mt-4 grid gap-2 text-xs font-semibold text-ink" htmlFor="chat-openrouter-key">
-              API ключ OpenRouter
-              <input
-                id="chat-openrouter-key"
-                type="password"
-                className="rounded-2xl border border-stroke bg-white px-4 py-3 text-sm text-ink"
-                value={openRouterKey}
-                onChange={(event) => setOpenRouterKey(event.target.value)}
-                placeholder="sk-or-..."
-              />
-            </label>
-            <details className="mt-4 rounded-2xl border border-stroke bg-white px-4 py-3 text-xs text-muted">
-              <summary className="cursor-pointer font-semibold text-ink">Модель</summary>
-              <label className="mt-3 grid gap-2 text-xs font-semibold text-ink" htmlFor="chat-openrouter-model">
-                Модель OpenRouter
-                <input
-                  id="chat-openrouter-model"
-                  className="rounded-2xl border border-stroke bg-white px-4 py-3 text-sm text-ink"
-                  value={openRouterModel}
-                  onChange={(event) => setOpenRouterModel(event.target.value)}
-                />
-              </label>
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted">
-                <span>Текущая модель: {openRouterModel}</span>
-                {envOpenRouterModel ? (
-                  <button
-                    type="button"
-                    className="rounded-full border border-stroke px-3 py-1 text-xs font-semibold text-ink"
-                    onClick={() => setOpenRouterModel(envOpenRouterModel)}
-                  >
-                    Сбросить на {envOpenRouterModel}
-                  </button>
-                ) : null}
+            <p className="text-sm font-semibold text-ink">AI работает автоматически</p>
+            <p className="mt-2 text-xs text-muted">
+              Чат подключен к OpenRouter на сервере, поэтому вам не нужно ничего настраивать.
+            </p>
+            <div className="mt-4 grid gap-3 text-xs text-muted sm:grid-cols-2">
+              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
+                <p className="text-xs font-semibold text-ink">Безопасность</p>
+                <p className="mt-1 text-xs text-muted">Ключ хранится в Vercel, а не в браузере.</p>
               </div>
-              <p className="mt-2 text-[11px] text-muted">
-                Можно задать через `VITE_OPENROUTER_MODEL` в `.env.local`.
-              </p>
-            </details>
+              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
+                <p className="text-xs font-semibold text-ink">Ответы</p>
+                <p className="mt-1 text-xs text-muted">Простые объяснения без диагнозов.</p>
+              </div>
+            </div>
             <p className="mt-3 text-xs text-muted">
               Советы носят информационный характер и не заменяют консультацию врача.
             </p>
