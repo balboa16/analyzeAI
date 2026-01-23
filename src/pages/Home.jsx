@@ -6,9 +6,12 @@ import Footer from "../sections/Footer";
 import Header from "../sections/Header";
 import Hero from "../sections/Hero";
 import HowItWorks from "../sections/HowItWorks";
+import PreProductsCTA from "../sections/PreProductsCTA";
 import Products from "../sections/Products";
 import Recommendations from "../sections/Recommendations";
+import ReportExample from "../sections/ReportExample";
 import Trust from "../sections/Trust";
+import TrustMini from "../sections/TrustMini";
 
 export default function Home() {
   return (
@@ -17,9 +20,12 @@ export default function Home() {
       <main>
         <Hero />
         <HowItWorks />
+        <TrustMini />
+        <ReportExample />
         <Demo />
         <ChatBot />
         <Recommendations />
+        <PreProductsCTA />
         <Products />
         <Trust />
         <FAQ />

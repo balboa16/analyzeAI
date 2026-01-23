@@ -1,20 +1,65 @@
 ﻿import SectionHeading from "../components/SectionHeading";
 
+const icons = {
+  upload: (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 15V4" />
+      <path d="M7 9l5-5 5 5" />
+      <path d="M4 20h16" />
+    </svg>
+  ),
+  report: (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 3h7l4 4v14H7z" />
+      <path d="M14 3v4h4" />
+      <path d="M9 12h6" />
+      <path d="M9 16h6" />
+    </svg>
+  ),
+  next: (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M11 8l4 4-4 4" />
+    </svg>
+  )
+};
+
 const steps = [
   {
-    number: "01",
+    icon: "upload",
     title: "Загрузите анализы",
     text: "Фото, PDF или ручной ввод — все форматы в одном месте."
   },
   {
-    number: "02",
-    title: "Получите расшифровку",
+    icon: "report",
+    title: "Получите понятный разбор",
     text: "Понятные объяснения каждого показателя без медицинского жаргона."
   },
   {
-    number: "03",
-    title: "Получите план",
-    text: "Питание, витамины, образ жизни и быстрый доступ к врачу."
+    icon: "next",
+    title: "Выберите следующий шаг",
+    text: "Рекомендации, чек-ап или консультация — без лишних переходов."
   }
 ];
 
@@ -30,11 +75,13 @@ export default function HowItWorks() {
         <div className="grid gap-6 md:grid-cols-3">
           {steps.map((step, index) => (
             <div
-              key={step.number}
+              key={step.title}
               className="card flex h-full flex-col gap-4 bg-white animate-fade-up"
               style={{ animationDelay: `${index * 80}ms` }}
             >
-              <div className="text-sm font-semibold text-muted">{step.number}</div>
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] bg-[var(--success-soft)] text-accent">
+                {icons[step.icon]}
+              </div>
               <h3 className="text-2xl text-ink">{step.title}</h3>
               <p className="text-sm text-muted">{step.text}</p>
             </div>
