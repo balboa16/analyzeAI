@@ -284,28 +284,12 @@ export default function Demo() {
               >
                 {isAnalyzing ? "Анализируем..." : "Получить расшифровку"}
               </Button>
+              <p className="text-[11px] text-muted">
+                AI-расшифровка работает автоматически, ключ хранится на сервере.
+              </p>
               {analysisError && !analysis ? (
                 <p className="text-xs text-rose-600">{analysisError}</p>
               ) : null}
-            </div>
-          </div>
-          <div className="rounded-3xl border border-stroke bg-white/80 p-6">
-            <p className="text-sm font-semibold text-ink">AI включен по умолчанию</p>
-            <p className="mt-2 text-xs text-muted">
-              Расшифровка работает автоматически через OpenRouter. Вам не нужно вводить ключ или
-              менять настройки.
-            </p>
-            <div className="mt-4 grid gap-3 text-xs text-muted sm:grid-cols-2">
-              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
-                <p className="text-xs font-semibold text-ink">Безопасность</p>
-                <p className="mt-1 text-xs text-muted">
-                  Ключ хранится на сервере, в браузер не попадает.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
-                <p className="text-xs font-semibold text-ink">Скорость</p>
-                <p className="mt-1 text-xs text-muted">Ответ приходит за 10–30 секунд.</p>
-              </div>
             </div>
           </div>
           <div className="rounded-3xl border border-stroke bg-white/80 p-6">

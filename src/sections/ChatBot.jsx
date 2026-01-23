@@ -93,25 +93,10 @@ export default function ChatBot() {
             title="Проверьте работу AI в простом чате"
             subtitle="Напишите вопрос о вашем самочувствии или уточните показатели — бот ответит на человеческом языке."
           />
-          <div className="rounded-3xl border border-stroke bg-white/80 p-6">
-            <p className="text-sm font-semibold text-ink">AI работает автоматически</p>
-            <p className="mt-2 text-xs text-muted">
-              Чат подключен к OpenRouter на сервере, поэтому вам не нужно ничего настраивать.
-            </p>
-            <div className="mt-4 grid gap-3 text-xs text-muted sm:grid-cols-2">
-              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
-                <p className="text-xs font-semibold text-ink">Безопасность</p>
-                <p className="mt-1 text-xs text-muted">Ключ хранится в Vercel, а не в браузере.</p>
-              </div>
-              <div className="rounded-2xl border border-stroke bg-white px-4 py-3">
-                <p className="text-xs font-semibold text-ink">Ответы</p>
-                <p className="mt-1 text-xs text-muted">Простые объяснения без диагнозов.</p>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-muted">
-              Советы носят информационный характер и не заменяют консультацию врача.
-            </p>
-          </div>
+          <p className="text-xs text-muted">
+            AI отвечает автоматически и простым языком. Советы носят информационный характер и не
+            заменяют консультацию врача.
+          </p>
         </div>
 
         <div className="rounded-[32px] border border-stroke bg-white/90 p-6 shadow-soft">

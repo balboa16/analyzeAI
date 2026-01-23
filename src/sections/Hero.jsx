@@ -1,4 +1,4 @@
-import Button from "../components/Button";
+﻿import Button from "../components/Button";
 
 const stats = [
   { value: "120K+", label: "пользователей по Кыргызстану" },
@@ -94,18 +94,18 @@ export default function Hero() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div className="overflow-hidden rounded-3xl">
                 <img
-                  src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=900&q=80"
+                  src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=900&q=80"
                   alt="Врач"
                   className="h-48 w-full object-cover"
-                  loading="lazy"
+                  loading="eager"
                 />
               </div>
               <div className="overflow-hidden rounded-3xl">
                 <img
-                  src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80"
+                  src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=900&q=80"
                   alt="Пациент"
                   className="h-48 w-full object-cover"
-                  loading="lazy"
+                  loading="eager"
                 />
               </div>
             </div>
