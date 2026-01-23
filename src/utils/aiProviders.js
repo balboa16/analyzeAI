@@ -1,6 +1,6 @@
 ﻿import { buildPrompt, normalizeAnalysis, safeParseJson } from "./analysisEngine";
 
-export const DEFAULT_OPENROUTER_MODEL = "qwen/qwen-2.5-7b-instruct:free";
+export const DEFAULT_OPENROUTER_MODEL = "xiaomi/mimo-v2-flash:free";
 
 const systemMessage =
   "Ты клинический ассистент. Отвечай структурированно и безопасно, без диагнозов. Формат строго JSON.";

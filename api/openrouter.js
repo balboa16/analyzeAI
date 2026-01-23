@@ -1,4 +1,4 @@
-﻿const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || "qwen/qwen-2.5-7b-instruct:free";
+﻿const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || "xiaomi/mimo-v2-flash:free";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

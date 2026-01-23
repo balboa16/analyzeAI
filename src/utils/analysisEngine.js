@@ -72,6 +72,25 @@ const resolveNote = (value, range, item) => {
   return "В норме";
 };
 
+const extractNumberFromWindow = (window, preferLast = false) => {
+  if (!window) {
+    return null;
+  }
+
+  const cleaned = window
+    .replace(/\d+(?:[\.,]\d+)?\s*[-–]\s*\d+(?:[\.,]\d+)?/g, " ")
+    .replace(/\d+\s*\^\s*\d+\s*\/\s*[a-zа-я%]+/gi, " ")
+    .replace(/\b\d+\s*\^\s*\d+\b/gi, " ");
+
+  const matches = [...cleaned.matchAll(/(\d+(?:[\.,]\d+)?)/g)];
+  if (!matches.length) {
+    return null;
+  }
+
+  const value = preferLast ? matches[matches.length - 1][1] : matches[0][1];
+  return normalizeNumber(value);
+};
+
 const extractValue = (text, patterns) => {
   for (const pattern of patterns) {
     const regex = new RegExp(pattern.source, "i");
@@ -81,14 +100,17 @@ const extractValue = (text, patterns) => {
     }
 
     const startIndex = match.index + match[0].length;
-    const window = text.slice(startIndex, startIndex + 120);
-    const withoutRanges = window.replace(
-      /\\d+(?:[\\.,]\\d+)?\\s*[-–]\\s*\\d+(?:[\\.,]\\d+)?/g,
-      " "
-    );
-    const numberMatch = withoutRanges.match(/(\\d+(?:[\\.,]\\d+)?)/);
-    if (numberMatch) {
-      return normalizeNumber(numberMatch[1]);
+    const forwardWindow = text.slice(startIndex, startIndex + 140);
+    const forwardValue = extractNumberFromWindow(forwardWindow, false);
+    if (isNumber(forwardValue)) {
+      return forwardValue;
+    }
+
+    const backwardStart = Math.max(0, match.index - 140);
+    const backwardWindow = text.slice(backwardStart, match.index);
+    const backwardValue = extractNumberFromWindow(backwardWindow, true);
+    if (isNumber(backwardValue)) {
+      return backwardValue;
     }
   }
 
