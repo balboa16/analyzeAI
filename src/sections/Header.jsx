@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import Button from "../components/Button";
+import logo from "../assets/sapat-logo.png";
 
 const navItems = [
   { label: "Как работает", href: "#how" },
@@ -18,11 +19,11 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-stroke bg-white/90 backdrop-blur">
       <div className="container flex items-center justify-between py-4">
         <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-ink text-white">
-          АА
-        </div>
+          <div className="flex h-10 items-center">
+            <img src={logo} alt="SAPATLAB" className="h-9 w-auto" />
+          </div>
           <div>
-            <p className="text-sm font-semibold text-ink">АнализAI</p>
+            <p className="text-sm font-semibold text-ink">SAPATLAB</p>
             <p className="text-xs text-muted">Клиническая расшифровка</p>
           </div>
         </div>
