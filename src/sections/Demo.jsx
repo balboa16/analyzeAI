@@ -170,9 +170,23 @@ export default function Demo() {
         }
       }
 
+      const fallback = buildRuleBasedAnalysis(inputText);
+
       if (!result?.metrics?.length) {
-        const fallback = buildRuleBasedAnalysis(inputText);
-        result = normalizeAnalysis(fallback, result?.source || fallback?.source);
+        const merged = {
+          ...fallback,
+          ...result,
+          title: result?.title || fallback.title,
+          summary: result?.summary || fallback.summary,
+          metrics: result?.metrics?.length ? result.metrics : fallback.metrics,
+          explanations: result?.explanations?.length ? result.explanations : fallback.explanations,
+          diet: result?.diet?.length ? result.diet : fallback.diet,
+          lifestyle: result?.lifestyle?.length ? result.lifestyle : fallback.lifestyle,
+          vitamins: result?.vitamins?.length ? result.vitamins : fallback.vitamins,
+          caution: result?.caution || fallback.caution
+        };
+
+        result = normalizeAnalysis(merged, result?.source || fallback?.source);
       }
 
       setAnalysis(result);
