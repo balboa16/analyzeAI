@@ -18,13 +18,13 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-stroke bg-white/90 backdrop-blur">
       <div className="container flex items-center justify-between py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div className="flex h-10 items-center">
-            <img src={logo} alt="SAPATLAB" className="h-9 w-auto" />
+            <img src={logo} alt="SAPAT" className="h-8 w-auto md:h-9" />
           </div>
-          <div>
-            <p className="text-sm font-semibold text-ink">SAPATLAB</p>
-            <p className="text-xs text-muted">Клиническая расшифровка</p>
+          <div className="flex flex-col leading-tight">
+            <p className="text-base font-semibold text-ink">SAPATLAB</p>
+            <p className="text-sm text-muted">Клиническая расшифровка</p>
           </div>
         </div>
         <nav className="hidden items-center gap-6 text-sm font-medium text-muted lg:flex">
