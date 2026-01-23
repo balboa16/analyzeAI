@@ -1,6 +1,7 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../components/Button";
-import Badge from "../components/Badge";
+import MetricCard from "../components/MetricCard";
+import ResultSummary from "../components/ResultSummary";
 import SectionHeading from "../components/SectionHeading";
 import { demoInput } from "../data/mockAnalysis";
 import {
@@ -20,6 +21,52 @@ const tabs = [
 ];
 
 const MAX_FILE_SIZE_MB = 10;
+
+const metricGroups = [
+  {
+    id: "cbc",
+    title: "Общий анализ крови",
+    match:
+      /лейкоцит|эритроцит|гемоглобин|гематокрит|тромбоцит|нейтрофил|лимфоцит|моноцит|эозинофил|базофил|соэ|wbc|rbc|hgb|hct|plt|mcv|mch|mchc|rdw/i
+  },
+  {
+    id: "bio",
+    title: "Биохимия",
+    match:
+      /глюкоз|холестерин|алт|аст|креатинин|мочевин|билирубин|альбумин|белок|липид|триглицерид|ферритин|железо/i
+  },
+  {
+    id: "hormones",
+    title: "Гормоны",
+    match:
+      /ттг|т3|т4|тестостерон|эстрадиол|пролактин|фсг|лг|прогестерон|инсулин|амг|dhea|дгэа|тирео/i
+  },
+  {
+    id: "vitamins",
+    title: "Витамины",
+    match: /витамин|b12|фолат|фолие/i
+  }
+];
+
+const nextStepCards = [
+  {
+    title: "Онлайн консультация врача",
+    text: "Разбор отчёта и ответы на вопросы за 15 минут.",
+    cta: "Записаться"
+  },
+  {
+    title: "Пакет расширенной биохимии",
+    text: "Уточнить обмен веществ и риски отклонений.",
+    cta: "Выбрать пакет"
+  },
+  {
+    title: "Персональный план",
+    text: "Питание и рекомендации с контролем на 30 дней.",
+    cta: "Получить план"
+  }
+];
+
+const statusOrder = { normal: 0, warning: 1, danger: 2 };
 
 export default function Demo() {
   const [mode, setMode] = useState("file");
@@ -220,6 +267,93 @@ export default function Demo() {
     return extractMetricsFromText(extractedText);
   }, [extractedText]);
 
+  const overallStatus = useMemo(() => {
+    if (!analysis?.metrics?.length) {
+      return "warning";
+    }
+
+    return analysis.metrics.reduce((acc, metric) => {
+      const current = statusOrder[metric.status] !== undefined ? metric.status : "normal";
+      return statusOrder[current] > statusOrder[acc] ? current : acc;
+    }, "normal");
+  }, [analysis]);
+
+  const summaryInsights = useMemo(() => {
+    if (!analysis) {
+      return [];
+    }
+
+    const metrics = analysis.metrics || [];
+    const flagged = metrics.filter((metric) => metric.status !== "normal");
+    const insights = [];
+
+    if (flagged.length) {
+      insights.push(
+        `Показатели внимания: ${flagged.slice(0, 3).map((item) => item.name).join(", ")}.`
+      );
+    } else if (metrics.length) {
+      insights.push("Ключевые показатели находятся в пределах нормы.");
+    }
+
+    if (analysis.summary) {
+      const sentence = analysis.summary
+        .split(/[.!?]/)
+        .map((item) => item.trim())
+        .filter(Boolean)[0];
+      if (sentence && !insights.includes(sentence)) {
+        insights.push(sentence);
+      }
+    }
+
+    insights.push("Отчёт можно сохранить в PDF и показать врачу.");
+
+    return insights.filter(Boolean).slice(0, 3);
+  }, [analysis]);
+
+  const groupedMetrics = useMemo(() => {
+    if (!analysis?.metrics?.length) {
+      return [];
+    }
+
+    const groups = metricGroups.map((group) => ({ ...group, items: [] }));
+    const rest = [];
+
+    analysis.metrics.forEach((metric) => {
+      const target = groups.find((group) => group.match.test(metric.name));
+      if (target) {
+        target.items.push(metric);
+      } else {
+        rest.push(metric);
+      }
+    });
+
+    const output = groups
+      .filter((group) => group.items.length)
+      .map(({ title, items }) => ({ title, items }));
+
+    if (rest.length) {
+      output.push({ title: "Другие показатели", items: rest });
+    }
+
+    return output;
+  }, [analysis]);
+
+  const actionItems = useMemo(() => {
+    if (!analysis) {
+      return [];
+    }
+
+    const flaggedCount = analysis.metrics.filter((metric) => metric.status !== "normal").length;
+
+    return [
+      flaggedCount
+        ? "Пересдать отклонённые показатели через 2–4 недели."
+        : "Плановый контроль через 6–12 месяцев.",
+      "Досдать анализы по рекомендации врача.",
+      "Консультация врача при симптомах или сомнениях."
+    ];
+  }, [analysis]);
+
   return (
     <section className="section-pad" id="demo">
       <div className="container grid gap-10 lg:items-start lg:grid-cols-[0.9fr,1.1fr]">
@@ -341,7 +475,7 @@ export default function Demo() {
             <div className="grid gap-6" aria-live="polite">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Результат</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Отчёт SAPATLAB</p>
                   <h3 className="text-2xl text-ink">{analysis.title}</h3>
                   <p className="text-xs text-muted">{analysis.updatedAt}</p>
                   {analysis.source?.provider ? (
@@ -350,33 +484,39 @@ export default function Demo() {
                     </p>
                   ) : null}
                 </div>
-                <Button variant="secondary" onClick={handlePdf} disabled={pdfLoading}>
-                  {pdfLoading ? "Готовим PDF..." : "Скачать PDF"}
-                </Button>
               </div>
               {analysisError ? (
                 <div className="rounded-[12px] border border-[rgba(214,166,79,0.35)] bg-[var(--warning-soft)] px-4 py-3 text-xs text-[#8a5a17]">
                   {analysisError}
                 </div>
               ) : null}
-              <p className="text-sm text-muted">{analysis.summary}</p>
-              <div className="grid gap-3">
+              <ResultSummary
+                status={analysisError ? "warning" : overallStatus}
+                insights={summaryInsights}
+              />
+
+              <div className="grid gap-5">
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted">Показатели</p>
+                    <h4 className="text-xl text-ink">Группы показателей</h4>
+                  </div>
+                  <span className="text-xs text-muted">
+                    {analysis.metrics.length} показателей
+                  </span>
+                </div>
                 {analysis.metrics.length ? (
-                  analysis.metrics.map((metric) => (
-                    <div
-                      key={`${metric.name}-${metric.value}`}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-stroke bg-white px-4 py-3"
-                    >
-                      <div>
-                        <p className="text-sm font-semibold text-ink">{metric.name}</p>
-                        <p className="text-xs text-muted">
-                          {metric.value} {metric.unit} {metric.range ? `· норма ${metric.range}` : ""}
-                        </p>
+                  groupedMetrics.map((group) => (
+                    <div key={group.title} className="grid gap-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-ink">{group.title}</p>
+                        <span className="text-xs text-muted">{group.items.length} шт.</span>
                       </div>
-                      <Badge
-                        label={metric.note || "Комментарий"}
-                        tone={metric.status === "danger" ? "danger" : metric.status}
-                      />
+                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                        {group.items.map((metric) => (
+                          <MetricCard key={`${metric.name}-${metric.value}`} metric={metric} />
+                        ))}
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -385,40 +525,61 @@ export default function Demo() {
                   </div>
                 )}
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                {analysis.explanations.map((item) => (
-                  <div key={item.title} className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] p-4">
-                    <p className="text-sm font-semibold text-ink">{item.title}</p>
-                    <p className="mt-2 text-xs text-muted">{item.text}</p>
-                  </div>
-                ))}
+
+              <div className="card bg-white">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Рекомендации</p>
+                  <h4 className="mt-2 text-xl text-ink">Что можно сделать</h4>
+                </div>
+                <ul className="mt-3 grid gap-2 text-sm text-muted">
+                  {actionItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-2 inline-flex h-2 w-2 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-[12px] border border-stroke bg-white px-4 py-4">
-                  <p className="text-sm font-semibold text-ink">Диета</p>
-                  <ul className="mt-2 space-y-1 text-xs text-muted">
-                    {analysis.diet.map((item) => (
-                      <li key={item}>• {item}</li>
-                    ))}
-                  </ul>
+
+              <div className="rounded-[16px] border border-stroke bg-[var(--bg-soft)] p-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Следующий шаг</p>
+                  <h4 className="mt-2 text-2xl text-ink">Следующий шаг</h4>
+                  <p className="mt-2 text-sm text-muted">
+                    Чтобы уточнить картину, можно досдать или выбрать готовый пакет.
+                  </p>
                 </div>
-                <div className="rounded-[12px] border border-stroke bg-white px-4 py-4">
-                  <p className="text-sm font-semibold text-ink">Образ жизни</p>
-                  <ul className="mt-2 space-y-1 text-xs text-muted">
-                    {analysis.lifestyle.map((item) => (
-                      <li key={item}>• {item}</li>
-                    ))}
-                  </ul>
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  {nextStepCards.map((card) => (
+                    <div key={card.title} className="rounded-[12px] border border-stroke bg-white p-4">
+                      <p className="text-sm font-semibold text-ink">{card.title}</p>
+                      <p className="mt-2 text-xs text-muted">{card.text}</p>
+                      <Button
+                        as="a"
+                        href="#products"
+                        variant="ghost"
+                        className="mt-4 w-full justify-center"
+                      >
+                        {card.cta}
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-                <div className="rounded-[12px] border border-stroke bg-white px-4 py-4">
-                  <p className="text-sm font-semibold text-ink">Витамины</p>
-                  <ul className="mt-2 space-y-1 text-xs text-muted">
-                    {analysis.vitamins.map((item) => (
-                      <li key={item}>• {item}</li>
-                    ))}
-                  </ul>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <Button as="a" href="#products" className="w-full sm:w-auto">
+                    Оформить заявку
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handlePdf}
+                    disabled={pdfLoading}
+                    className="w-full sm:w-auto"
+                  >
+                    {pdfLoading ? "Готовим PDF..." : "Напечатать отчёт"}
+                  </Button>
                 </div>
               </div>
+
               <p className="text-xs text-muted">{analysis.caution}</p>
             </div>
           ) : (
