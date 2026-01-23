@@ -222,7 +222,7 @@ export default function Demo() {
 
   return (
     <section className="section-pad" id="demo">
-      <div className="container grid gap-10 lg:grid-cols-[0.9fr,1.1fr]">
+      <div className="container grid gap-10 lg:items-start lg:grid-cols-[0.9fr,1.1fr]">
         <div className="flex flex-col gap-6">
           <SectionHeading
             eyebrow="Интерактивный демо"
@@ -236,9 +236,9 @@ export default function Demo() {
                   key={tab.id}
                   type="button"
                   onClick={() => setMode(tab.id)}
-                  className={`flex-1 whitespace-nowrap rounded-full px-4 py-2 text-center text-xs font-semibold transition sm:flex-none ${
+                  className={`flex-1 whitespace-nowrap rounded-full px-4 py-2 text-center text-xs font-semibold transition sm:flex-none sm:text-sm ${
                     mode === tab.id
-                      ? "bg-ink text-white"
+                      ? "bg-accent text-white"
                       : "bg-white text-muted border border-stroke"
                   }`}
                 >
@@ -249,14 +249,14 @@ export default function Demo() {
             <div className="grid gap-4 rounded-[16px] bg-[var(--bg-soft)] p-4">
               {mode === "file" ? (
                 <label
-                  className="flex min-h-[160px] cursor-pointer flex-col gap-3 rounded-[16px] border border-dashed border-stroke bg-white px-4 py-5 text-sm transition hover:border-[rgba(31,127,92,0.4)]"
+                  className="relative flex min-h-[160px] cursor-pointer flex-col gap-3 rounded-[16px] border border-dashed border-stroke bg-white px-4 py-5 text-sm transition hover:border-[rgba(31,127,92,0.4)] focus-within:border-[rgba(31,127,92,0.6)] focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-bg"
                   htmlFor="analysis-file"
                 >
                   <span className="font-semibold text-ink">Выберите файл анализа</span>
                   <input
                     id="analysis-file"
                     type="file"
-                    className="sr-only"
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={handleFileChange}
                   />
@@ -336,7 +336,7 @@ export default function Demo() {
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-soft md:min-h-[560px]">
+        <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-soft lg:min-h-[420px] xl:min-h-[480px]">
           {analysis ? (
             <div className="grid gap-6" aria-live="polite">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -358,7 +358,7 @@ export default function Demo() {
                 <div className="rounded-[12px] border border-[rgba(214,166,79,0.35)] bg-[var(--warning-soft)] px-4 py-3 text-xs text-[#8a5a17]">
                   {analysisError}
                 </div>
-                ) : null}
+              ) : null}
               <p className="text-sm text-muted">{analysis.summary}</p>
               <div className="grid gap-3">
                 {analysis.metrics.length ? (

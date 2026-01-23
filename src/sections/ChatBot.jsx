@@ -102,7 +102,7 @@ export default function ChatBot() {
         <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-soft">
           <div
             ref={scrollRef}
-            className="max-h-[420px] space-y-4 overflow-y-auto rounded-[12px] bg-[var(--bg-softer)] p-4"
+            className="max-h-[320px] space-y-4 overflow-y-auto rounded-[12px] bg-[var(--bg-softer)] p-4 sm:max-h-[360px] md:max-h-[420px]"
           >
             {messages.map((msg, index) => (
               <div

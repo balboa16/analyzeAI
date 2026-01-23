@@ -44,14 +44,14 @@ export default function Products() {
 
   return (
     <section className="section-pad" id="products">
-      <div className="container grid gap-10 lg:grid-cols-[1.1fr,0.9fr]">
+      <div className="container grid gap-10 lg:items-start lg:grid-cols-[1.1fr,0.9fr]">
         <div className="flex flex-col gap-8">
           <SectionHeading
             eyebrow="Продукты"
             title="Продолжение после расшифровки"
             subtitle="Когда нужны медицинские решения — мы сразу предлагаем удобные варианты без поиска по городу."
           />
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
             {products.map((product) => (
               <div key={product.title} className="card flex flex-col gap-4">
                 <span className="pill">{product.tag}</span>

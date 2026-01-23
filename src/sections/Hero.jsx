@@ -94,23 +94,23 @@ export default function Hero() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div className="overflow-hidden rounded-[16px]">
                 <img
-                  src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=900&q=80"
+                  src="https://images.pexels.com/photos/6129507/pexels-photo-6129507.jpeg?auto=compress&cs=tinysrgb&w=900"
                   alt="Врач"
-                  className="h-48 w-full object-cover"
+                  className="h-44 w-full object-cover sm:h-48"
                   loading="eager"
                 />
               </div>
               <div className="overflow-hidden rounded-[16px]">
                 <img
-                  src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=900&q=80"
-                  alt="Пациент"
-                  className="h-48 w-full object-cover"
-                  loading="eager"
+                  src="https://images.pexels.com/photos/5726794/pexels-photo-5726794.jpeg?auto=compress&cs=tinysrgb&w=900"
+                  alt="Рабочее место лаборатории"
+                  className="h-44 w-full object-cover sm:h-48"
+                  loading="lazy"
                 />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 text-xs text-muted">
-              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="inline-flex h-2 w-2 rounded-full bg-accent" />
               Проверено врачом и клиническими алгоритмами
             </div>
           </div>

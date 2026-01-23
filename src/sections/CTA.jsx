@@ -4,7 +4,7 @@ export default function CTA() {
   return (
     <section className="section-pad" id="cta">
       <div className="container">
-        <div className="relative overflow-hidden rounded-[16px] border border-stroke bg-accent px-8 py-12 text-white shadow-soft">
+        <div className="relative overflow-hidden rounded-[16px] border border-stroke bg-accent px-6 py-10 text-white shadow-soft sm:px-8 sm:py-12">
           <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -bottom-10 left-10 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
           <div className="relative z-10 grid gap-6 lg:grid-cols-[1.2fr,0.8fr]">
@@ -18,10 +18,15 @@ export default function CTA() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-              <Button as="a" href="#demo" className="w-full sm:w-auto">
+              <Button as="a" href="#demo" variant="secondary" className="w-full text-accent sm:w-auto">
                 Загрузить анализы
               </Button>
-              <Button as="a" href="#products" variant="secondary" className="w-full sm:w-auto">
+              <Button
+                as="a"
+                href="#products"
+                variant="ghost"
+                className="w-full border border-white/40 text-white hover:bg-white/10 hover:text-white sm:w-auto"
+              >
                 Записаться в клинику
               </Button>
             </div>

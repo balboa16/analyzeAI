@@ -29,7 +29,7 @@ export default function Trust() {
           title="От врачей клиники и пациентов"
           subtitle="Мы работаем вместе с клиницистами, поэтому рекомендации опираются на реальные протоколы."
         />
-        <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
+        <div className="grid gap-6 lg:items-start lg:grid-cols-[1.1fr,0.9fr]">
           <div className="grid gap-6 md:grid-cols-2">
             {testimonials.map((item) => (
               <div key={item.name} className="card h-full">
