@@ -252,14 +252,55 @@ export const safeParseJson = (input) => {
     return null;
   }
 
-  const extractJsonCandidate = (value) => {
+  const extractJsonCandidates = (value) => {
+    const candidates = [];
     const fenced = value.match(/```(?:json)?([\s\S]*?)```/i);
     if (fenced?.[1]) {
-      return fenced[1];
+      candidates.push(fenced[1]);
     }
 
-    const match = value.match(/\{[\s\S]*\}/);
-    return match ? match[0] : null;
+    for (let start = 0; start < value.length; start += 1) {
+      const opener = value[start];
+      if (opener !== "{" && opener !== "[") {
+        continue;
+      }
+
+      let depth = 0;
+      let inString = false;
+      let escaped = false;
+
+      for (let i = start; i < value.length; i += 1) {
+        const char = value[i];
+
+        if (inString) {
+          if (escaped) {
+            escaped = false;
+          } else if (char === "\\") {
+            escaped = true;
+          } else if (char === "\"") {
+            inString = false;
+          }
+          continue;
+        }
+
+        if (char === "\"") {
+          inString = true;
+          continue;
+        }
+
+        if (char === "{" || char === "[") {
+          depth += 1;
+        } else if (char === "}" || char === "]") {
+          depth -= 1;
+          if (depth === 0) {
+            candidates.push(value.slice(start, i + 1));
+            break;
+          }
+        }
+      }
+    }
+
+    return candidates;
   };
 
   const tryParse = (value) => {
@@ -270,28 +311,35 @@ export const safeParseJson = (input) => {
     }
   };
 
-  const candidate = extractJsonCandidate(input.trim());
-  if (!candidate) {
+  const candidates = extractJsonCandidates(input.trim());
+  if (!candidates.length) {
     return null;
   }
 
-  const direct = tryParse(candidate);
-  if (direct) {
-    return direct;
+  for (const candidate of candidates) {
+    const direct = tryParse(candidate);
+    if (direct) {
+      return direct;
+    }
+
+    const normalized = candidate
+      .trim()
+      .replace(/[“”«»]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/,\s*([}\]])/g, "$1")
+      .replace(/([{\s,])([A-Za-z0-9_]+)\s*:/g, '$1"$2":')
+      .replace(/:\s*(normal|warning|danger)\b/g, ': "$1"')
+      .replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_, text) =>
+        `"${text.replace(/"/g, '\\"')}"`
+      );
+
+    const repaired = tryParse(normalized);
+    if (repaired) {
+      return repaired;
+    }
   }
 
-  let normalized = candidate
-    .trim()
-    .replace(/[“”«»]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/,\s*([}\]])/g, "$1")
-    .replace(/([{\s,])([A-Za-z0-9_]+)\s*:/g, '$1"$2":')
-    .replace(/:\s*(normal|warning|danger)\b/g, ': "$1"')
-    .replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_, text) =>
-      `"${text.replace(/"/g, '\\"')}"`
-    );
-
-  return tryParse(normalized);
+  return null;
 };
 
 const ensureArray = (value) => (Array.isArray(value) ? value : []);
