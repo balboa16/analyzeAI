@@ -31,7 +31,7 @@ export default function HowItWorks() {
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className="card flex h-full flex-col gap-4 bg-white/90 animate-fade-up"
+              className="card flex h-full flex-col gap-4 bg-white animate-fade-up"
               style={{ animationDelay: `${index * 80}ms` }}
             >
               <div className="text-sm font-semibold text-muted">{step.number}</div>

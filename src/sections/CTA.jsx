@@ -4,9 +4,9 @@ export default function CTA() {
   return (
     <section className="section-pad" id="cta">
       <div className="container">
-        <div className="relative overflow-hidden rounded-[40px] border border-stroke bg-ink px-8 py-12 text-white shadow-soft">
-          <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-accent/20 blur-2xl" />
-          <div className="absolute -bottom-10 left-10 h-28 w-28 rounded-full bg-accent2/30 blur-2xl" />
+        <div className="relative overflow-hidden rounded-[16px] border border-stroke bg-accent px-8 py-12 text-white shadow-soft">
+          <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute -bottom-10 left-10 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
           <div className="relative z-10 grid gap-6 lg:grid-cols-[1.2fr,0.8fr]">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-white/70">

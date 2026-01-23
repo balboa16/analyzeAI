@@ -35,7 +35,7 @@ export default function FAQ() {
           {faqs.map((faq) => (
             <details
               key={faq.question}
-              className="rounded-2xl border border-stroke bg-white/90 px-6 py-4"
+              className="rounded-[12px] border border-stroke bg-white px-6 py-4"
             >
               <summary className="cursor-pointer text-sm font-semibold text-ink">
                 {faq.question}

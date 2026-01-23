@@ -99,10 +99,10 @@ export default function ChatBot() {
           </p>
         </div>
 
-        <div className="rounded-[32px] border border-stroke bg-white/90 p-6 shadow-soft">
+        <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-soft">
           <div
             ref={scrollRef}
-            className="max-h-[420px] space-y-4 overflow-y-auto rounded-2xl bg-bg/40 p-4"
+            className="max-h-[420px] space-y-4 overflow-y-auto rounded-[12px] bg-[var(--bg-softer)] p-4"
           >
             {messages.map((msg, index) => (
               <div
@@ -110,7 +110,7 @@ export default function ChatBot() {
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-soft ${
+                  className={`max-w-[80%] rounded-[12px] px-4 py-3 text-sm shadow-soft ${
                     msg.role === "user"
                       ? "bg-ink text-white"
                       : "bg-white text-ink border border-stroke"
@@ -123,7 +123,7 @@ export default function ChatBot() {
           </div>
           <div className="mt-4 grid gap-3">
             <textarea
-              className="min-h-[90px] rounded-2xl border border-stroke bg-white px-4 py-3 text-sm text-ink"
+              className="min-h-[90px] rounded-[12px] border border-stroke bg-white px-4 py-3 text-sm text-ink focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               placeholder="Например: Я загрузил анализы, холестерин 5.9 — что это значит?"
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -135,7 +135,7 @@ export default function ChatBot() {
                 {isSending ? "Отправляем..." : "Отправить"}
               </Button>
             </div>
-            {error ? <p className="text-xs text-rose-600">{error}</p> : null}
+            {error ? <p className="text-xs text-danger">{error}</p> : null}
           </div>
         </div>
       </div>

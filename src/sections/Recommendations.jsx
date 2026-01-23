@@ -31,11 +31,9 @@ export default function Recommendations() {
           {items.map((item, index) => (
             <div
               key={item.title}
-              className={`card relative overflow-hidden ${
-                index === 1 ? "bg-white/95" : "bg-white/85"
-              }`}
+              className="card relative overflow-hidden"
             >
-              <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
+              <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-[var(--success-soft)] blur-2xl" />
               <p className="text-xs uppercase tracking-[0.25em] text-muted">{item.highlight}</p>
               <h3 className="mt-3 text-2xl text-ink">{item.title}</h3>
               <p className="mt-3 text-sm text-muted">{item.description}</p>

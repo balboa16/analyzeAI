@@ -7,8 +7,14 @@ module.exports = {
       padding: {
         DEFAULT: "1.25rem",
         sm: "1.5rem",
-        lg: "2rem",
-        xl: "2.5rem"
+        lg: "2rem"
+      },
+      screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1180px",
+        "2xl": "1180px"
       }
     },
     extend: {
@@ -30,9 +36,9 @@ module.exports = {
         body: ["IBM Plex Sans", "sans-serif"]
       },
       boxShadow: {
-        soft: "0 24px 70px -40px rgba(16, 38, 43, 0.35)",
-        glow: "0 18px 45px -25px rgba(31, 157, 140, 0.6)",
-        card: "0 25px 60px -40px rgba(16, 38, 43, 0.45)"
+        soft: "0 12px 30px -24px rgba(15, 23, 42, 0.25)",
+        glow: "0 12px 30px -24px rgba(31, 127, 92, 0.25)",
+        card: "0 10px 24px -20px rgba(15, 23, 42, 0.2)"
       },
       keyframes: {
         "fade-up": {

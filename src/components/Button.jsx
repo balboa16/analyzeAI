@@ -5,10 +5,14 @@ export default function Button({
   children,
   ...props
 }) {
-  const baseClass = variant === "secondary" ? "btn-secondary" : "btn-primary";
+  const variantClass = {
+    primary: "btn-primary",
+    secondary: "btn-secondary",
+    ghost: "btn-ghost"
+  }[variant] || "btn-primary";
 
   return (
-    <Component className={`${baseClass} ${className}`.trim()} {...props}>
+    <Component className={`${variantClass} ${className}`.trim()} {...props}>
       {children}
     </Component>
   );

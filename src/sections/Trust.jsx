@@ -38,7 +38,7 @@ export default function Trust() {
               </div>
             ))}
           </div>
-          <div className="card flex flex-col gap-6 bg-white/95">
+          <div className="card flex flex-col gap-6 bg-white">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-muted">Сертификаты</p>
               <h3 className="mt-3 text-2xl text-ink">Прозрачность и контроль качества</h3>
@@ -47,7 +47,7 @@ export default function Trust() {
               {certificates.map((item) => (
                 <div
                   key={item}
-                  className="flex items-center justify-center rounded-2xl border border-stroke bg-bg/70 px-3 py-4 text-xs font-semibold text-muted"
+                  className="flex items-center justify-center rounded-2xl border border-stroke bg-[var(--bg-soft)] px-3 py-4 text-xs font-semibold text-muted"
                 >
                   {item}
                 </div>

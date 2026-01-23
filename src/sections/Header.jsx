@@ -15,12 +15,12 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-stroke/60 bg-bg/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-stroke bg-white/90 backdrop-blur">
       <div className="container flex items-center justify-between py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-ink text-white">
-            АА
-          </div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-ink text-white">
+          АА
+        </div>
           <div>
             <p className="text-sm font-semibold text-ink">АнализAI</p>
             <p className="text-xs text-muted">Клиническая расшифровка</p>
@@ -48,8 +48,8 @@ export default function Header() {
         </div>
       </div>
       {isOpen ? (
-        <div className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-sm lg:hidden">
-          <div className="absolute right-4 top-4 w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-white p-6 shadow-soft">
+        <div className="fixed inset-0 z-50 bg-[rgba(27,27,27,0.4)] backdrop-blur-sm lg:hidden">
+          <div className="absolute right-4 top-4 w-[calc(100%-2rem)] max-w-sm rounded-[16px] bg-white p-6 shadow-soft">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-ink">Навигация</p>
               <button

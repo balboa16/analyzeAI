@@ -42,7 +42,7 @@ export default function Hero() {
             {stats.map((stat, index) => (
               <div
                 key={stat.value}
-                className="rounded-2xl border border-stroke bg-white/80 px-4 py-3 animate-fade-up"
+                className="rounded-2xl border border-stroke bg-white px-4 py-3 animate-fade-up"
                 style={{ animationDelay: `${260 + index * 80}ms` }}
               >
                 <p className="text-xl font-semibold text-ink">{stat.value}</p>
@@ -52,10 +52,10 @@ export default function Hero() {
           </div>
         </div>
         <div className="relative">
-          <div className="absolute -top-8 left-8 hidden h-28 w-28 rounded-full floating-orb opacity-70 blur-xl lg:block" />
-          <div className="absolute -bottom-8 right-6 hidden h-24 w-24 rounded-full floating-orb opacity-70 blur-xl lg:block" />
-          <div className="relative rounded-[36px] border border-stroke bg-white/80 p-6 shadow-soft">
-            <div className="hero-gradient rounded-[28px] p-6">
+          <div className="absolute -top-8 left-8 hidden h-24 w-24 rounded-full floating-orb opacity-50 blur-xl lg:block" />
+          <div className="absolute -bottom-8 right-6 hidden h-20 w-20 rounded-full floating-orb opacity-50 blur-xl lg:block" />
+          <div className="relative rounded-[16px] border border-stroke bg-white p-6 shadow-soft">
+            <div className="hero-gradient rounded-[12px] p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
@@ -69,12 +69,12 @@ export default function Hero() {
                 <div className="rounded-2xl bg-white px-4 py-3 shadow-soft">
                   <p className="text-xs text-muted">Витамин D</p>
                   <p className="text-lg font-semibold text-ink">22 нг/мл</p>
-                  <p className="text-xs text-amber-600">Ниже нормы</p>
+                  <p className="text-xs text-warning">Ниже нормы</p>
                 </div>
                 <div className="rounded-2xl bg-white px-4 py-3 shadow-soft">
                   <p className="text-xs text-muted">Глюкоза</p>
                   <p className="text-lg font-semibold text-ink">5.1 ммоль/л</p>
-                  <p className="text-xs text-emerald-600">В норме</p>
+                  <p className="text-xs text-success">В норме</p>
                 </div>
               </div>
               <div className="mt-6 flex flex-wrap gap-2">
@@ -92,7 +92,7 @@ export default function Hero() {
               </div>
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="overflow-hidden rounded-3xl">
+              <div className="overflow-hidden rounded-[16px]">
                 <img
                   src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=900&q=80"
                   alt="Врач"
@@ -100,7 +100,7 @@ export default function Hero() {
                   loading="eager"
                 />
               </div>
-              <div className="overflow-hidden rounded-3xl">
+              <div className="overflow-hidden rounded-[16px]">
                 <img
                   src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=900&q=80"
                   alt="Пациент"

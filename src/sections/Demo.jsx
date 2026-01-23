@@ -229,7 +229,7 @@ export default function Demo() {
             title="Посмотрите, как выглядит расшифровка"
             subtitle="Загрузите файл, вставьте текст или попробуйте пример. Ответ появляется за секунды и уже готов к действию."
           />
-          <div className="grid gap-3 rounded-3xl border border-stroke bg-white/80 p-4">
+          <div className="grid gap-3 rounded-[16px] border border-stroke bg-white p-4">
             <div className="flex flex-wrap gap-2">
               {tabs.map((tab) => (
                 <button
@@ -246,17 +246,17 @@ export default function Demo() {
                 </button>
               ))}
             </div>
-            <div className="grid gap-4 rounded-2xl bg-bg/60 p-4">
+            <div className="grid gap-4 rounded-[16px] bg-[var(--bg-soft)] p-4">
               {mode === "file" ? (
                 <label
-                  className="flex flex-col gap-3 rounded-2xl border border-dashed border-stroke bg-white px-4 py-5 text-sm"
+                  className="flex min-h-[160px] flex-col gap-3 rounded-[16px] border border-dashed border-stroke bg-white px-4 py-5 text-sm"
                   htmlFor="analysis-file"
                 >
                   <span className="font-semibold text-ink">Выберите файл анализа</span>
                   <input
                     id="analysis-file"
                     type="file"
-                    className="text-sm"
+                    className="text-sm text-muted file:mr-4 file:rounded-[12px] file:border file:border-stroke file:bg-white file:px-4 file:py-2 file:text-xs file:font-semibold file:text-ink"
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={handleFileChange}
                   />
@@ -264,19 +264,19 @@ export default function Demo() {
                   {fileName ? (
                     <span className="text-xs font-semibold text-ink">Файл: {fileName}</span>
                   ) : null}
-                  {fileError ? <span className="text-xs text-rose-600">{fileError}</span> : null}
+                  {fileError ? <span className="text-xs text-danger">{fileError}</span> : null}
                 </label>
               ) : null}
 
               {mode === "manual" ? (
                 <label
-                  className="flex flex-col gap-3 rounded-2xl border border-stroke bg-white px-4 py-5 text-sm"
+                  className="flex flex-col gap-3 rounded-[16px] border border-stroke bg-white px-4 py-5 text-sm"
                   htmlFor="analysis-manual"
                 >
                   <span className="font-semibold text-ink">Введите показатели</span>
                   <textarea
                     id="analysis-manual"
-                    className="min-h-[140px] rounded-2xl border border-stroke px-4 py-3 text-sm text-ink"
+                    className="min-h-[140px] rounded-[12px] border border-stroke px-4 py-3 text-sm text-ink focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                     placeholder={demoInput.manualPlaceholder}
                     value={manualInput}
                     onChange={(event) => setManualInput(event.target.value)}
@@ -285,14 +285,14 @@ export default function Demo() {
               ) : null}
 
               {mode === "sample" ? (
-                <div className="rounded-2xl border border-stroke bg-white px-4 py-5 text-sm">
+                <div className="rounded-[16px] border border-stroke bg-white px-4 py-5 text-sm">
                   <p className="font-semibold text-ink">Демо-анализ</p>
                   <p className="mt-2 text-xs text-muted">{demoInput.sampleText}</p>
                 </div>
               ) : null}
 
               {isExtracting ? (
-                <div className="rounded-2xl border border-stroke bg-white px-4 py-4 text-xs text-muted">
+                <div className="rounded-[16px] border border-stroke bg-white px-4 py-4 text-xs text-muted">
                   <div className="flex items-center justify-between">
                     <span>Распознаем файл: {extractStatus.stage || "обработка"}</span>
                     <span>{Math.round(extractStatus.progress * 100)}%</span>
@@ -318,11 +318,11 @@ export default function Demo() {
                 AI-расшифровка работает автоматически, ключ хранится на сервере.
               </p>
               {analysisError && !analysis ? (
-                <p className="text-xs text-rose-600">{analysisError}</p>
+                <p className="text-xs text-danger">{analysisError}</p>
               ) : null}
             </div>
           </div>
-          <div className="rounded-3xl border border-stroke bg-white/80 p-6">
+          <div className="rounded-[16px] border border-stroke bg-white p-6">
             <p className="text-sm font-semibold text-ink">Что вы получите</p>
             <ul className="mt-3 space-y-2 text-sm text-muted">
               <li>• Пояснения по каждому показателю</li>
@@ -333,7 +333,7 @@ export default function Demo() {
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-stroke bg-white/90 p-6 shadow-soft md:min-h-[560px]">
+        <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-soft md:min-h-[560px]">
           {analysis ? (
             <div className="grid gap-6" aria-live="polite">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -352,17 +352,17 @@ export default function Demo() {
                 </Button>
               </div>
               {analysisError ? (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">
+                <div className="rounded-[12px] border border-[rgba(214,166,79,0.35)] bg-[var(--warning-soft)] px-4 py-3 text-xs text-[#8a5a17]">
                   {analysisError}
                 </div>
-              ) : null}
+                ) : null}
               <p className="text-sm text-muted">{analysis.summary}</p>
               <div className="grid gap-3">
                 {analysis.metrics.length ? (
                   analysis.metrics.map((metric) => (
                     <div
                       key={`${metric.name}-${metric.value}`}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stroke bg-white px-4 py-3"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-stroke bg-white px-4 py-3"
                     >
                       <div>
                         <p className="text-sm font-semibold text-ink">{metric.name}</p>
@@ -377,21 +377,21 @@ export default function Demo() {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-2xl border border-stroke bg-white px-4 py-3 text-xs text-muted">
+                  <div className="rounded-[12px] border border-stroke bg-white px-4 py-3 text-xs text-muted">
                     Нет распознанных показателей. Проверьте формат ввода.
                   </div>
                 )}
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 {analysis.explanations.map((item) => (
-                  <div key={item.title} className="rounded-2xl border border-stroke bg-bg/60 p-4">
+                  <div key={item.title} className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] p-4">
                     <p className="text-sm font-semibold text-ink">{item.title}</p>
                     <p className="mt-2 text-xs text-muted">{item.text}</p>
                   </div>
                 ))}
               </div>
               <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-stroke bg-white px-4 py-4">
+                <div className="rounded-[12px] border border-stroke bg-white px-4 py-4">
                   <p className="text-sm font-semibold text-ink">Диета</p>
                   <ul className="mt-2 space-y-1 text-xs text-muted">
                     {analysis.diet.map((item) => (
@@ -399,7 +399,7 @@ export default function Demo() {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-2xl border border-stroke bg-white px-4 py-4">
+                <div className="rounded-[12px] border border-stroke bg-white px-4 py-4">
                   <p className="text-sm font-semibold text-ink">Образ жизни</p>
                   <ul className="mt-2 space-y-1 text-xs text-muted">
                     {analysis.lifestyle.map((item) => (
@@ -407,7 +407,7 @@ export default function Demo() {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-2xl border border-stroke bg-white px-4 py-4">
+                <div className="rounded-[12px] border border-stroke bg-white px-4 py-4">
                   <p className="text-sm font-semibold text-ink">Витамины</p>
                   <ul className="mt-2 space-y-1 text-xs text-muted">
                     {analysis.vitamins.map((item) => (
@@ -420,7 +420,7 @@ export default function Demo() {
             </div>
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center text-muted">
-              <div className="h-16 w-16 rounded-3xl bg-accent/10 text-2xl font-semibold text-accent">
+              <div className="h-16 w-16 rounded-[16px] bg-[var(--success-soft)] text-2xl font-semibold text-accent">
                 AI
               </div>
               <p className="text-sm">
@@ -435,7 +435,7 @@ export default function Demo() {
           )}
 
           {extractedText ? (
-            <details className="mt-6 rounded-2xl border border-stroke bg-white px-4 py-3 text-xs text-muted">
+            <details className="mt-6 rounded-[12px] border border-stroke bg-white px-4 py-3 text-xs text-muted">
               <summary className="cursor-pointer font-semibold text-ink">
                 Посмотреть распознанный текст ({recognizedMetrics.length} показателей)
               </summary>
