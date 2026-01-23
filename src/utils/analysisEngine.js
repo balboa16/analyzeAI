@@ -209,7 +209,8 @@ export const buildRuleBasedAnalysis = (text) => {
 
 export const buildPrompt = (text) => `
 Ты медицинский аналитик для массовой аудитории Кыргызстана.
-Верни СТРОГО JSON без markdown и пояснений. Язык ответа: русский.
+Верни СТРОГО валидный JSON без markdown и пояснений. Язык ответа: русский.
+Используй только двойные кавычки. Никаких комментариев или текста вне JSON.
 
 Сформируй структуру:
 {
@@ -234,7 +235,7 @@ export const buildPrompt = (text) => `
 
 Правила:
 - Распознавай показатели из текста анализов, не придумывай новые.
-- range заполняй только если он явно указан, иначе ставь "не указан".
+- range всегда строка; если диапазон не указан, ставь "".
 - status вычисляй по диапазону; если диапазона нет, ставь "normal".
 - note: кратко ("в норме", "выше нормы", "ниже нормы", "требует внимания").
 - summary: 2–3 предложения — общая картина, ключевые отклонения, следующий шаг.
@@ -251,17 +252,46 @@ export const safeParseJson = (input) => {
     return null;
   }
 
-  const trimmed = input.trim();
-  const jsonMatch = trimmed.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
+  const extractJsonCandidate = (value) => {
+    const fenced = value.match(/```(?:json)?([\s\S]*?)```/i);
+    if (fenced?.[1]) {
+      return fenced[1];
+    }
+
+    const match = value.match(/\{[\s\S]*\}/);
+    return match ? match[0] : null;
+  };
+
+  const tryParse = (value) => {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return null;
+    }
+  };
+
+  const candidate = extractJsonCandidate(input.trim());
+  if (!candidate) {
     return null;
   }
 
-  try {
-    return JSON.parse(jsonMatch[0]);
-  } catch {
-    return null;
+  const direct = tryParse(candidate);
+  if (direct) {
+    return direct;
   }
+
+  let normalized = candidate
+    .trim()
+    .replace(/[“”«»]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/,\s*([}\]])/g, "$1")
+    .replace(/([{\s,])([A-Za-z0-9_]+)\s*:/g, '$1"$2":')
+    .replace(/:\s*(normal|warning|danger)\b/g, ': "$1"')
+    .replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_, text) =>
+      `"${text.replace(/"/g, '\\"')}"`
+    );
+
+  return tryParse(normalized);
 };
 
 const ensureArray = (value) => (Array.isArray(value) ? value : []);
