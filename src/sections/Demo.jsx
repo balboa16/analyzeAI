@@ -236,7 +236,7 @@ export default function Demo() {
                   key={tab.id}
                   type="button"
                   onClick={() => setMode(tab.id)}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
+                  className={`flex-1 whitespace-nowrap rounded-full px-4 py-2 text-center text-xs font-semibold transition sm:flex-none ${
                     mode === tab.id
                       ? "bg-ink text-white"
                       : "bg-white text-muted border border-stroke"
@@ -249,17 +249,20 @@ export default function Demo() {
             <div className="grid gap-4 rounded-[16px] bg-[var(--bg-soft)] p-4">
               {mode === "file" ? (
                 <label
-                  className="flex min-h-[160px] flex-col gap-3 rounded-[16px] border border-dashed border-stroke bg-white px-4 py-5 text-sm"
+                  className="flex min-h-[160px] cursor-pointer flex-col gap-3 rounded-[16px] border border-dashed border-stroke bg-white px-4 py-5 text-sm transition hover:border-[rgba(31,127,92,0.4)]"
                   htmlFor="analysis-file"
                 >
                   <span className="font-semibold text-ink">Выберите файл анализа</span>
                   <input
                     id="analysis-file"
                     type="file"
-                    className="text-sm text-muted file:mr-4 file:rounded-[12px] file:border file:border-stroke file:bg-white file:px-4 file:py-2 file:text-xs file:font-semibold file:text-ink"
+                    className="sr-only"
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={handleFileChange}
                   />
+                  <span className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-[12px] border border-stroke bg-white px-4 text-xs font-semibold text-ink">
+                    Выбрать файл
+                  </span>
                   <span className="text-xs text-muted">{demoInput.fileHint}</span>
                   {fileName ? (
                     <span className="text-xs font-semibold text-ink">Файл: {fileName}</span>

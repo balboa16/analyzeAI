@@ -129,9 +129,14 @@ export default function ChatBot() {
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-muted">Shift + Enter для новой строки</p>
-              <Button type="button" onClick={handleSend} disabled={isSending}>
+              <Button
+                type="button"
+                onClick={handleSend}
+                disabled={isSending}
+                className="w-full sm:w-auto"
+              >
                 {isSending ? "Отправляем..." : "Отправить"}
               </Button>
             </div>

@@ -28,13 +28,13 @@ export default function Hero() {
             сразу в телефоне.
           </p>
           <div
-            className="flex flex-wrap items-center gap-3 animate-fade-up"
+            className="flex flex-col gap-3 sm:flex-row sm:items-center animate-fade-up"
             style={{ animationDelay: "200ms" }}
           >
-            <Button as="a" href="#demo">
+            <Button as="a" href="#demo" className="w-full sm:w-auto">
               Загрузить анализы
             </Button>
-            <Button as="a" href="#how" variant="secondary">
+            <Button as="a" href="#how" variant="secondary" className="w-full sm:w-auto">
               Как это работает
             </Button>
           </div>

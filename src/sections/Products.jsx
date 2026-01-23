@@ -67,9 +67,9 @@ export default function Products() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto flex items-center justify-between">
+                <div className="mt-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm font-semibold text-ink">{product.price}</p>
-                  <Button as="a" href="#cta" variant="secondary">
+                  <Button as="a" href="#cta" variant="secondary" className="w-full sm:w-auto">
                     Записаться
                   </Button>
                 </div>
