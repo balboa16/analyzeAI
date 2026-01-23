@@ -19,8 +19,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-stroke bg-white/90 backdrop-blur">
       <div className="container flex items-center justify-between py-4">
         <div className="flex flex-col gap-1">
-          <div className="flex h-12 items-center">
-            <img src={logo} alt="SAPATLAB" className="h-10 w-auto md:h-11" />
+          <div className="flex h-12 items-center md:h-14">
+            <img src={logo} alt="SAPATLAB" className="h-12 w-auto md:h-14" />
           </div>
           <p className="text-xs text-muted md:text-sm">Клиническая расшифровка</p>
         </div>
