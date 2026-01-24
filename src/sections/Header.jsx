@@ -4,6 +4,7 @@ import logo from "../assets/sapat-logo.png";
 
 const navItems = [
   { label: "Как работает", href: "#how" },
+  { label: "AI-разбор", href: "#demo" },
   { label: "Пример отчёта", href: "#report" },
   { label: "Доверие", href: "#safety" },
   { label: "Пакеты", href: "#products" }

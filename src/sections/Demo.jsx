@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../components/Button";
 import MetricCard from "../components/MetricCard";
 import ResultSummary from "../components/ResultSummary";
@@ -27,7 +27,7 @@ const metricGroups = [
     id: "cbc",
     title: "Общий анализ крови",
     match:
-      /лейкоцит|эритроцит|гемоглобин|гематокрит|тромбоцит|нейтрофил|лимфоцит|моноцит|эозинофил|базофил|соэ|wbc|rbc|hgb|hct|plt|mcv|mch|mchc|rdw/i
+      /лейкоцит|эритроцит|гемоглобин|гематокрит|тромбоцит|нейтрофил|лимфоцит|моноцит|эозинофил|базофил|соэ|сое|wbc|rbc|hgb|hct|plt|mcv|mch|mchc|rdw/i
   },
   {
     id: "bio",
@@ -44,7 +44,7 @@ const metricGroups = [
   {
     id: "vitamins",
     title: "Витамины",
-    match: /витамин|b12|фолат|фолие/i
+    match: /витамин|b12|фолат|фоли/i
   }
 ];
 
@@ -149,7 +149,9 @@ export default function Demo() {
       setExtractedText(text);
       return text;
     } catch (error) {
-      setFileError("Не удалось распознать файл. Попробуйте PDF с текстовым слоем или ручной ввод.");
+      setFileError(
+        "Не удалось распознать файл. Попробуйте PDF с текстовым слоем или ручной ввод."
+      );
       return "";
     } finally {
       setIsExtracting(false);
@@ -289,7 +291,10 @@ export default function Demo() {
 
     if (flagged.length) {
       insights.push(
-        `Показатели внимания: ${flagged.slice(0, 3).map((item) => item.name).join(", ")}.`
+        `Показатели внимания: ${flagged
+          .slice(0, 3)
+          .map((item) => item.name)
+          .join(", ")}.`
       );
     } else if (metrics.length) {
       insights.push("Ключевые показатели находятся в пределах нормы.");
@@ -347,8 +352,8 @@ export default function Demo() {
 
     return [
       flaggedCount
-        ? "Пересдать отклонённые показатели через 2–4 недели."
-        : "Плановый контроль через 6–12 месяцев.",
+        ? "Пересдать отклонённые показатели через 2-4 недели."
+        : "Плановый контроль через 6-12 месяцев.",
       "Досдать анализы по рекомендации врача.",
       "Консультация врача при симптомах или сомнениях."
     ];
@@ -359,7 +364,7 @@ export default function Demo() {
       <div className="container grid gap-10 lg:items-start lg:grid-cols-[0.9fr,1.1fr]">
         <div className="flex flex-col gap-6">
           <SectionHeading
-            eyebrow="Интерактивный демо"
+            eyebrow="Интерактивное демо"
             title="Посмотрите, как выглядит расшифровка"
             subtitle="Загрузите файл, вставьте текст или попробуйте пример. Ответ появляется за секунды и уже готов к действию."
           />
@@ -431,7 +436,9 @@ export default function Demo() {
               {isExtracting ? (
                 <div className="rounded-[16px] border border-stroke bg-white px-4 py-4 text-xs text-muted">
                   <div className="flex items-center justify-between">
-                    <span>Распознаем файл: {extractStatus.stage || "обработка"}</span>
+                    <span>
+                      Распознаём файл: {extractStatus.stage || "обработка"}
+                    </span>
                     <span>{Math.round(extractStatus.progress * 100)}%</span>
                   </div>
                   <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-stroke">
@@ -588,7 +595,7 @@ export default function Demo() {
                 AI
               </div>
               <p className="text-sm">
-                Заполните данные и нажмите “Получить расшифровку”, чтобы увидеть результат.
+                Заполните данные и нажмите «Получить расшифровку», чтобы увидеть результат.
               </p>
               {isAnalyzing ? (
                 <div className="w-full max-w-xs overflow-hidden rounded-full bg-stroke">
