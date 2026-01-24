@@ -14,20 +14,12 @@ export default function CTA() {
               </p>
               <h2 className="mt-4 text-3xl md:text-4xl">Получить расшифровку бесплатно</h2>
               <p className="mt-3 text-sm text-white/80">
-                Попробуйте демо-анализ уже сегодня и получите первую подборку рекомендаций.
+                Оставьте заявку и получите отчёт с понятными рекомендациями.
               </p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-              <Button as="a" href="#demo" variant="secondary" className="w-full text-accent sm:w-auto">
+            <div className="flex flex-col sm:items-end">
+              <Button as="a" href="#products" variant="secondary" className="w-full text-accent sm:w-auto">
                 Загрузить анализы
-              </Button>
-              <Button
-                as="a"
-                href="#products"
-                variant="ghost"
-                className="w-full border border-white/40 text-white hover:bg-white/10 hover:text-white sm:w-auto"
-              >
-                Записаться в клинику
               </Button>
             </div>
           </div>

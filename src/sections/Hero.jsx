@@ -50,7 +50,7 @@ export default function Hero() {
             className="flex flex-col gap-3 sm:flex-row sm:items-center animate-fade-up"
             style={{ animationDelay: "220ms" }}
           >
-            <Button as="a" href="#demo" className="w-full sm:w-auto">
+            <Button as="a" href="#products" className="w-full sm:w-auto">
               Загрузить анализы
             </Button>
             <Button as="a" href="#report" variant="secondary" className="w-full sm:w-auto">

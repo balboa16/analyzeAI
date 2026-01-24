@@ -1,5 +1,4 @@
-import Button from "../components/Button";
-import Badge from "../components/Badge";
+﻿import Badge from "../components/Badge";
 import SectionHeading from "../components/SectionHeading";
 
 const reportMetrics = [
@@ -88,9 +87,6 @@ export default function ReportExample() {
               </li>
             ))}
           </ul>
-          <Button as="a" href="#demo" className="w-full sm:w-auto">
-            Получить разбор
-          </Button>
         </div>
       </div>
     </section>

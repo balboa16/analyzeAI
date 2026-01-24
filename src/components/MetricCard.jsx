@@ -1,4 +1,4 @@
-import Badge from "./Badge";
+﻿import Badge from "./Badge";
 
 const statusMap = {
   normal: {
@@ -46,12 +46,14 @@ export default function MetricCard({ metric }) {
 
   return (
     <div className="card flex h-full flex-col gap-3">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-ink">{metric.name}</p>
-          <p className="text-xs text-muted">{rangeLabel}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-ink break-words">{metric.name}</p>
+          <p className="text-xs text-muted break-words">{rangeLabel}</p>
         </div>
-        <Badge label={status.label} tone={status.tone} />
+        <div className="shrink-0">
+          <Badge label={status.label} tone={status.tone} />
+        </div>
       </div>
       <div className="flex items-baseline gap-2">
         <p className="text-2xl font-semibold text-ink">{valueText}</p>

@@ -4,12 +4,9 @@ import logo from "../assets/sapat-logo.png";
 
 const navItems = [
   { label: "Как работает", href: "#how" },
-  { label: "Демо", href: "#demo" },
-  { label: "Чат", href: "#chat" },
-  { label: "Рекомендации", href: "#recommendations" },
-  { label: "Продукты", href: "#products" },
-  { label: "Отзывы", href: "#trust" },
-  { label: "FAQ", href: "#faq" }
+  { label: "Пример отчёта", href: "#report" },
+  { label: "Доверие", href: "#safety" },
+  { label: "Пакеты", href: "#products" }
 ];
 
 export default function Header() {
@@ -32,7 +29,7 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <Button as="a" href="#demo" className="hidden lg:inline-flex">
+          <Button as="a" href="#products" className="hidden lg:inline-flex">
             Загрузить анализы
           </Button>
           <button
@@ -73,7 +70,7 @@ export default function Header() {
             </nav>
             <Button
               as="a"
-              href="#demo"
+              href="#products"
               className="mt-6 w-full justify-center"
               onClick={() => setIsOpen(false)}
             >
