@@ -10,9 +10,9 @@
         </div>
         <div className="space-y-2 text-xs text-muted">
           <p>Контакты</p>
-          <p>+996 700 000 000</p>
-          <p>WhatsApp: +996 700 000 000</p>
-          <p>Бишкек, ул. Советская 12</p>
+          <p>+996 990 10 88 88</p>
+          <p>WhatsApp: +996 990 10 88 88</p>
+          <p>г. Бишкек, Мкр. Джал-29, д.18</p>
         </div>
         <div className="space-y-2 text-xs text-muted">
           <p>Документы</p>
