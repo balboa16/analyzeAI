@@ -1,7 +1,9 @@
-ï»¿import { jsPDF } from "jspdf";
+import { jsPDF } from "jspdf";
 import fontUrl from "../assets/fonts/IBMPlexSans-Regular.ttf?url";
+import logoUrl from "../assets/sapat-logo.png?url";
 
 let fontCache = null;
+let logoCache = null;
 
 async function loadFontBase64() {
   if (fontCache) {
@@ -21,8 +23,27 @@ async function loadFontBase64() {
   return fontCache;
 }
 
+async function loadLogoBase64() {
+  if (logoCache) {
+    return logoCache;
+  }
+
+  const response = await fetch(logoUrl);
+  const buffer = await response.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  logoCache = btoa(binary);
+  return logoCache;
+}
+
 export async function generatePdfReport(analysis) {
   const fontData = await loadFontBase64();
+  const logoData = await loadLogoBase64();
   const doc = new jsPDF({ unit: "pt", format: "a4" });
 
   doc.addFileToVFS("IBMPlexSans-Regular.ttf", fontData);
@@ -30,64 +51,105 @@ export async function generatePdfReport(analysis) {
   doc.setFont("IBMPlexSans", "normal");
 
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 48;
   const maxWidth = pageWidth - margin * 2;
   let y = 64;
 
-  doc.setFontSize(20);
-  doc.text("Ð Ð°ÑÑˆÐ¸Ñ„Ñ€Ð¾Ð²ÐºÐ° Ð¼ÐµÐ´Ð¸Ñ†Ð¸Ð½ÑÐºÐ¸Ñ… Ð°Ð½Ð°Ð»Ð¸Ð·Ð¾Ð²", margin, y);
-  y += 24;
+  const accent = [31, 127, 92];
+  const soft = [230, 242, 237];
+  const muted = [107, 114, 128];
 
-  doc.setFontSize(11);
-  doc.text(`Ð”Ð°Ñ‚Ð°: ${new Date().toLocaleDateString("ru-RU")}`, margin, y);
-  y += 22;
+  const drawHeader = () => {
+    doc.setFillColor(...soft);
+    doc.rect(0, 0, pageWidth, 76, "F");
+    doc.addImage(logoData, "PNG", margin, 18, 90, 40);
+    doc.setTextColor(27, 27, 27);
+    doc.setFontSize(18);
+    doc.text("Ðàñøèôðîâêà ìåäèöèíñêèõ àíàëèçîâ", margin + 110, 42);
+    doc.setFontSize(10);
+    doc.setTextColor(...muted);
+    doc.text(`SAPATLAB · ${new Date().toLocaleDateString("ru-RU")}`, margin + 110, 58);
+  };
 
-  doc.setFontSize(14);
+  const ensureSpace = (needed) => {
+    if (y + needed <= pageHeight - 56) {
+      return;
+    }
+    doc.addPage();
+    drawHeader();
+    y = 96;
+  };
+
+  const sectionTitle = (title) => {
+    ensureSpace(30);
+    doc.setTextColor(...accent);
+    doc.setFontSize(12);
+    doc.text(title, margin, y);
+    y += 12;
+    doc.setDrawColor(229, 231, 235);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 12;
+    doc.setTextColor(27, 27, 27);
+  };
+
+  drawHeader();
+  y = 96;
+
+  doc.setFontSize(15);
   doc.text(analysis.title, margin, y);
-  y += 18;
+  y += 16;
 
   doc.setFontSize(11);
+  doc.setTextColor(...muted);
   doc.text(doc.splitTextToSize(analysis.summary, maxWidth), margin, y);
-  y += 52;
+  doc.setTextColor(27, 27, 27);
+  y += 40;
 
-  doc.setFontSize(12);
-  doc.text("ÐžÑÐ½Ð¾Ð²Ð½Ñ‹Ðµ Ð¿Ð¾ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»Ð¸:", margin, y);
-  y += 18;
+  sectionTitle("Îñíîâíûå ïîêàçàòåëè");
 
   doc.setFontSize(11);
   analysis.metrics.forEach((metric) => {
-    if (y > 760) {
-      doc.addPage();
-      y = 60;
-    }
-
-    doc.text(
-      `${metric.name}: ${metric.value} ${metric.unit} (Ð½Ð¾Ñ€Ð¼Ð° ${metric.range})`,
-      margin,
-      y
-    );
+    ensureSpace(20);
+    const left = `${metric.name}`;
+    const right = `${metric.value} ${metric.unit} · íîðìà ${metric.range || "—"}`;
+    doc.setTextColor(27, 27, 27);
+    doc.text(left, margin, y);
+    doc.setTextColor(...muted);
+    doc.text(right, margin + 220, y);
     y += 16;
   });
 
-  y += 16;
-  doc.setFontSize(12);
-  doc.text("Ð ÐµÐºÐ¾Ð¼ÐµÐ½Ð´Ð°Ñ†Ð¸Ð¸:", margin, y);
-  y += 18;
+  y += 14;
+  sectionTitle("Ðåêîìåíäàöèè");
 
   doc.setFontSize(11);
-  const recommendations = [...analysis.diet, ...analysis.lifestyle, ...analysis.vitamins];
+  const recommendations = [
+    ...(analysis.diet || []),
+    ...(analysis.lifestyle || []),
+    ...(analysis.vitamins || [])
+  ];
   recommendations.forEach((item) => {
-    if (y > 760) {
-      doc.addPage();
-      y = 60;
-    }
-
-    doc.text(`â€¢ ${item}`, margin, y);
+    ensureSpace(18);
+    doc.text(`• ${item}`, margin, y);
     y += 16;
   });
 
-  y += 18;
+  if (analysis.dietPlan?.length) {
+    y += 10;
+    sectionTitle("Ïëàí ïèòàíèÿ íà 7 äíåé (ïðèìåð)");
+    doc.setFontSize(10);
+    analysis.dietPlan.forEach((item) => {
+      ensureSpace(18);
+      doc.text(`• ${item}`, margin, y);
+      y += 15;
+    });
+  }
+
+  y += 16;
+  ensureSpace(30);
   doc.setFontSize(9);
+  doc.setTextColor(...muted);
   doc.text(analysis.caution, margin, y, { maxWidth });
 
   doc.save("analysis-report.pdf");

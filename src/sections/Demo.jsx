@@ -184,7 +184,7 @@ export default function Demo() {
         return "Превышен лимит запросов OpenRouter. Попробуйте позже.";
       }
       if (error?.status === 404) {
-        return "Модель OpenRouter недоступна. Попробуйте другую модель.";
+        return "Модель OpenRouter недоступна. Показали локальный анализ по распознанным данным.";
       }
       if (error?.message?.includes("not configured")) {
         return "Ключ OpenRouter не задан на сервере. Проверьте переменные окружения.";
@@ -243,9 +243,11 @@ export default function Demo() {
       const fallback = buildRuleBasedAnalysis(inputText);
       fallback.source = { provider: "Fallback", model: "Rule-based" };
       setAnalysis(fallback);
-      setAnalysisError(
-        `${formatOpenRouterError(error)} Показан базовый анализ, проверьте данные.`
-      );
+      const errorMessage = formatOpenRouterError(error);
+      const suffix = errorMessage.includes("локальный анализ")
+        ? ""
+        : " Показан локальный анализ по распознанным данным.";
+      setAnalysisError(`${errorMessage}${suffix}`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -547,6 +549,65 @@ export default function Demo() {
                   ))}
                 </ul>
               </div>
+
+              <div className="card bg-white">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Питание и режим</p>
+                  <h4 className="mt-2 text-xl text-ink">Подробные рекомендации</h4>
+                </div>
+                <div className="mt-4 grid gap-4 md:grid-cols-3">
+                  <div className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] px-4 py-4">
+                    <p className="text-sm font-semibold text-ink">Питание</p>
+                    <ul className="mt-2 grid gap-2 text-xs text-muted">
+                      {(analysis.diet || []).map((item) => (
+                        <li key={item} className="flex items-start gap-2">
+                          <span className="mt-2 inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] px-4 py-4">
+                    <p className="text-sm font-semibold text-ink">Образ жизни</p>
+                    <ul className="mt-2 grid gap-2 text-xs text-muted">
+                      {(analysis.lifestyle || []).map((item) => (
+                        <li key={item} className="flex items-start gap-2">
+                          <span className="mt-2 inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] px-4 py-4">
+                    <p className="text-sm font-semibold text-ink">Витамины</p>
+                    <ul className="mt-2 grid gap-2 text-xs text-muted">
+                      {(analysis.vitamins || []).map((item) => (
+                        <li key={item} className="flex items-start gap-2">
+                          <span className="mt-2 inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {analysis.dietPlan?.length ? (
+                <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-card">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted">План питания</p>
+                    <h4 className="mt-2 text-xl text-ink">Пример на неделю</h4>
+                  </div>
+                  <ul className="mt-4 grid gap-2 text-sm text-muted">
+                    {analysis.dietPlan.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <span className="mt-2 inline-flex h-2 w-2 rounded-full bg-accent" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
 
               <div className="rounded-[16px] border border-stroke bg-[var(--bg-soft)] p-6">
                 <div>

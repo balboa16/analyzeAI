@@ -36,7 +36,7 @@ export default function ChatBot() {
       return "Превышен лимит запросов OpenRouter. Попробуйте позже.";
     }
     if (err?.status === 404) {
-      return "Модель OpenRouter недоступна. Попробуйте другую модель.";
+      return "Модель OpenRouter недоступна. Попробуйте другую модель или позже.";
     }
     if (err?.message?.includes("not configured")) {
       return "Ключ OpenRouter не задан на сервере. Проверьте переменные окружения.";

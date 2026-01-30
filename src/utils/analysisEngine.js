@@ -228,18 +228,22 @@ const buildTips = (metrics) => {
   if (vitaminD && vitaminD.status !== "normal") {
     vitamins.push("Витамин D3 — 2000 МЕ в день 8 недель.");
     diet.push("Добавьте жирную рыбу 2 раза в неделю (форель, скумбрия).");
+    diet.push("Яйца 3–4 раза в неделю и кисломолочные продукты без сахара.");
     lifestyle.push("10–15 минут дневного света в первой половине дня.");
   }
 
   const cholesterol = metricIndex.get("cholesterol");
   if (cholesterol && cholesterol.status !== "normal") {
     diet.push("Снизьте количество сахара и выпечки, добавьте клетчатку.");
+    diet.push("Замените жирное мясо на птицу и рыбу, используйте оливковое масло.");
+    diet.push("Добавьте цельнозерновые гарниры 3–4 раза в неделю.");
     lifestyle.push("Ходьба 30 минут в день или 8–10 тыс. шагов.");
   }
 
   const glucose = metricIndex.get("glucose");
   if (glucose && glucose.status !== "normal") {
     diet.push("Сделайте упор на овощи и белок, уберите сладкие напитки.");
+    diet.push("Старайтесь есть каждые 3–4 часа, без больших перерывов.");
     lifestyle.push("Стабилизируйте сон: 7–8 часов ежедневно.");
   }
 
@@ -250,27 +254,67 @@ const buildTips = (metrics) => {
     (hemoglobin && hemoglobin.status === "warning")
   ) {
     diet.push("Добавьте источники железа: говядина, печень, бобовые.");
+    diet.push("Сочетайте железо с витамином C (перец, киви, лимон).");
     vitamins.push("Железо — по назначению врача после консультации.");
   }
 
   if (!diet.length) {
     diet.push("Овощи 400–500 г в день и достаточное количество воды.");
+    diet.push("Белок в каждом приёме пищи: рыба, птица, творог или бобовые.");
+    diet.push("1–2 порции фруктов в первой половине дня.");
   }
 
   if (!lifestyle.length) {
     lifestyle.push("Легкая ежедневная активность и контроль стресса.");
+    lifestyle.push("Сон 7–8 часов и одинаковое время подъема.");
+    lifestyle.push("Ограничьте кофеин после 16:00.");
   }
 
   if (!vitamins.length) {
     vitamins.push("Поддерживающий поливитаминный комплекс по согласованию с врачом.");
+    vitamins.push("Омега‑3 — 1000 мг/день курсом 4 недели.");
   }
 
   return { diet, lifestyle, vitamins };
 };
 
+const buildDietPlan = (metrics) => {
+  const metricIndex = new Map(metrics.map((metric) => [metric.id, metric]));
+  const glucose = metricIndex.get("glucose");
+  const cholesterol = metricIndex.get("cholesterol");
+
+  const metabolicFocus = Boolean(
+    (glucose && glucose.status !== "normal") ||
+      (cholesterol && cholesterol.status !== "normal")
+  );
+
+  if (metabolicFocus) {
+    return [
+      "День 1: завтрак — овсянка + ягоды; обед — курица, гречка, салат; ужин — рыба, тушёные овощи; перекус — орехи.",
+      "День 2: завтрак — омлет + овощи; обед — чечевичный суп, цельнозерновой тост; ужин — индейка, киноа; перекус — кефир.",
+      "День 3: завтрак — творог + яблоко; обед — рыба на пару, бурый рис; ужин — овощное рагу + яйцо; перекус — йогурт без сахара.",
+      "День 4: завтрак — гречка + яйцо; обед — говядина, овощи, салат; ужин — запечённые овощи + фасоль; перекус — курага.",
+      "День 5: завтрак — овсянка + семена; обед — курица, булгур; ужин — рыба, салат с оливковым маслом; перекус — творог.",
+      "День 6: завтрак — йогурт + орехи; обед — тушёная индейка, овощи; ужин — суп-пюре + тост; перекус — фрукты.",
+      "День 7: завтрак — омлет + зелень; обед — рыба, киноа; ужин — салат с курицей; перекус — кефир."
+    ];
+  }
+
+  return [
+    "День 1: завтрак — овсянка + фрукты; обед — курица, гречка, салат; ужин — рыба, овощи; перекус — йогурт.",
+    "День 2: завтрак — омлет + зелень; обед — чечевица, салат; ужин — индейка + овощи; перекус — орехи.",
+    "День 3: завтрак — творог + ягоды; обед — говядина, овощи; ужин — суп-пюре; перекус — кефир.",
+    "День 4: завтрак — гречка + яйцо; обед — рыба, булгур; ужин — овощное рагу; перекус — фрукты.",
+    "День 5: завтрак — йогурт + семена; обед — курица, рис; ужин — салат с яйцом; перекус — творог.",
+    "День 6: завтрак — овсянка + орехи; обед — суп + тост; ужин — рыба, овощи; перекус — айран.",
+    "День 7: завтрак — омлет + овощи; обед — индейка, киноа; ужин — салат с рыбой; перекус — фрукты."
+  ];
+};
+
 export const buildRuleBasedAnalysis = (text) => {
   const metrics = extractMetricsFromText(text);
   const tips = buildTips(metrics);
+  const dietPlan = buildDietPlan(metrics);
 
   return {
     title: DEFAULT_TITLE,
@@ -292,6 +336,7 @@ export const buildRuleBasedAnalysis = (text) => {
     diet: tips.diet,
     lifestyle: tips.lifestyle,
     vitamins: tips.vitamins,
+    dietPlan,
     caution: DEFAULT_CAUTION
   };
 };
@@ -321,6 +366,7 @@ export const buildPrompt = (text) => {
   "diet": [string],
   "lifestyle": [string],
   "vitamins": [string],
+  "dietPlan": [string],
   "caution": string
 }
 
@@ -331,7 +377,8 @@ export const buildPrompt = (text) => {
 - note: кратко ("в норме", "выше нормы", "ниже нормы", "требует внимания").
 - summary: 2–3 предложения — общая картина, ключевые отклонения, следующий шаг.
 - explanations: до 4 пунктов, только по отклонениям.
-- diet/lifestyle/vitamins: по 3–5 конкретных, выполнимых рекомендаций.
+- diet/lifestyle/vitamins: по 5–7 конкретных, выполнимых рекомендаций.
+- dietPlan: 5–7 строк, каждая начинается с "День N:" и содержит 3 приема пищи + 1 перекус.
 - Не ставь диагнозы и не назначай лечение.
 
 Входной текст анализов:
@@ -464,6 +511,9 @@ export const normalizeAnalysis = (data, meta = {}) => {
     diet: ensureArray(data?.diet).map((item) => ensureString(item, "")).filter(Boolean),
     lifestyle: ensureArray(data?.lifestyle).map((item) => ensureString(item, "")).filter(Boolean),
     vitamins: ensureArray(data?.vitamins).map((item) => ensureString(item, "")).filter(Boolean),
+    dietPlan: ensureArray(data?.dietPlan || data?.diet_plan)
+      .map((item) => ensureString(item, ""))
+      .filter(Boolean),
     caution: ensureString(data?.caution, DEFAULT_CAUTION),
     source: meta
   };
