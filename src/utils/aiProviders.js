@@ -1,11 +1,11 @@
-п»їimport { buildPrompt, normalizeAnalysis, safeParseJson } from "./analysisEngine";
+import { buildPrompt, normalizeAnalysis, safeParseJson } from "./analysisEngine";
 
-export const DEFAULT_OPENROUTER_MODEL = "xiaomi/mimo-v2-flash:free";
+export const DEFAULT_OPENROUTER_MODEL = "google/gemma-3-27b-it:free";
 
 const systemMessage =
-  "РўС‹ РєР»РёРЅРёС‡РµСЃРєРёР№ Р°СЃСЃРёСЃС‚РµРЅС‚. РћС‚РІРµС‡Р°Р№ СЃС‚СЂСѓРєС‚СѓСЂРёСЂРѕРІР°РЅРЅРѕ Рё Р±РµР·РѕРїР°СЃРЅРѕ, Р±РµР· РґРёР°РіРЅРѕР·РѕРІ. Р¤РѕСЂРјР°С‚ СЃС‚СЂРѕРіРѕ JSON.";
+  "Ты клинический ассистент. Отвечай структурированно и безопасно, без диагнозов. Формат строго JSON.";
 const strictSystemMessage =
-  `${systemMessage} Р’РѕР·РІСЂР°С‰Р°Р№ С‚РѕР»СЊРєРѕ РѕРґРёРЅ JSON-РѕР±СЉРµРєС‚ Р±РµР· С‚РµРєСЃС‚Р° РґРѕ РёР»Рё РїРѕСЃР»Рµ.`;
+  `${systemMessage} Возвращай только один JSON-объект без текста до или после.`;
 
 const buildMessages = (text, strict = false) => [
   { role: "system", content: strict ? strictSystemMessage : systemMessage },
@@ -14,7 +14,7 @@ const buildMessages = (text, strict = false) => [
 
 const parseApiError = async (response) => {
   const raw = await response.text();
-  let message = `OpenRouter РЅРµРґРѕСЃС‚СѓРїРµРЅ (HTTP ${response.status})`;
+  let message = `OpenRouter недоступен (HTTP ${response.status})`;
 
   if (raw) {
     try {
@@ -69,7 +69,7 @@ export const analyzeWithOpenRouter = async ({ text, model, signal, strict = fals
 
   const parsed = safeParseJson(content);
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    const error = new Error("РћС‚РІРµС‚ РјРѕРґРµР»Рё РЅРµ СЂР°СЃРїРѕР·РЅР°РЅ");
+    const error = new Error("Ответ модели не распознан");
     error.code = "INVALID_JSON";
     error.content = content;
     throw error;
@@ -91,8 +91,9 @@ export const chatWithOpenRouter = async ({ messages, model, signal }) => {
   });
 
   if (!content) {
-    throw new Error("РџСѓСЃС‚РѕР№ РѕС‚РІРµС‚ РјРѕРґРµР»Рё");
+    throw new Error("Пустой ответ модели");
   }
 
   return content;
 };
+

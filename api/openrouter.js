@@ -1,4 +1,4 @@
-﻿const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || "xiaomi/mimo-v2-flash:free";
+const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || "google/gemma-3-27b-it:free";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -72,3 +72,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: error?.message || "OpenRouter request failed" });
   }
 }
+
