@@ -21,17 +21,17 @@ export default async function handler(req, res) {
     }
   }
 
-  const { messages, model, temperature, max_tokens } = body;
+  const { messages, model } = body;
   if (!Array.isArray(messages) || messages.length === 0) {
     res.status(400).json({ error: "messages is required" });
     return;
   }
 
+  const usedModel = model || DEFAULT_MODEL;
+
   const payload = {
-    model: model || DEFAULT_MODEL,
+    model: usedModel,
     messages,
-    temperature: typeof temperature === "number" ? temperature : 0.2,
-    max_completion_tokens: typeof max_tokens === "number" ? max_tokens : 900,
   };
 
   try {
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     }
 
     const content = data?.choices?.[0]?.message?.content || "";
-    res.status(200).json({ content });
+    res.status(200).json({ content, model: usedModel });
   } catch (error) {
     res.status(500).json({ error: error?.message || "OpenAI request failed" });
   }
