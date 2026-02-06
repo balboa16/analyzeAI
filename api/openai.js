@@ -1,5 +1,4 @@
-const DEFAULT_MODEL =
-  process.env.OPENROUTER_MODEL || "google/gemma-3-27b-it:free";
+const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-5-mini";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -7,9 +6,9 @@ export default async function handler(req, res) {
     return;
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    res.status(500).json({ error: "OpenRouter API key is not configured" });
+    res.status(500).json({ error: "OpenAI API key is not configured" });
     return;
   }
 
@@ -35,26 +34,15 @@ export default async function handler(req, res) {
     max_tokens: typeof max_tokens === "number" ? max_tokens : 900,
   };
 
-  const referer =
-    process.env.OPENROUTER_APP_URL ||
-    req.headers.origin ||
-    req.headers.referer ||
-    "https://analyze-ai-six.vercel.app";
-
   try {
-    const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-          "HTTP-Referer": referer,
-          "X-Title": process.env.OPENROUTER_APP_NAME || "AnalizAI",
-        },
-        body: JSON.stringify(payload),
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
+      body: JSON.stringify(payload),
+    });
 
     const raw = await response.text();
     if (!response.ok) {
@@ -66,15 +54,13 @@ export default async function handler(req, res) {
     try {
       data = JSON.parse(raw);
     } catch {
-      res.status(502).json({ error: "Invalid response from OpenRouter" });
+      res.status(502).json({ error: "Invalid response from OpenAI" });
       return;
     }
 
     const content = data?.choices?.[0]?.message?.content || "";
     res.status(200).json({ content });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: error?.message || "OpenRouter request failed" });
+    res.status(500).json({ error: error?.message || "OpenAI request failed" });
   }
 }

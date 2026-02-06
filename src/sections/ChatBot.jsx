@@ -1,7 +1,7 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button";
 import SectionHeading from "../components/SectionHeading";
-import { chatWithOpenRouter } from "../utils/aiProviders";
+import { chatWithAI } from "../utils/aiProviders";
 
 const SYSTEM_PROMPT =
   "Ты медицинский консультант. Отвечай спокойно, без диагнозов и назначений. " +
@@ -28,18 +28,18 @@ export default function ChatBot() {
     }
   }, [messages]);
 
-  const formatOpenRouterError = (err) => {
+  const formatAIError = (err) => {
     if (err?.status === 401 || err?.status === 403) {
-      return "Ключ OpenRouter не настроен или недействителен.";
+      return "Ключ AI не настроен или недействителен.";
     }
     if (err?.status === 429) {
       return "AI-консультант временно недоступен из-за высокой нагрузки. Попробуйте через 10–15 минут или используйте расшифровку анализов выше.";
     }
     if (err?.status === 404) {
-      return "Модель OpenRouter недоступна. Попробуйте другую модель или позже.";
+      return "Модель AI недоступна. Попробуйте позже.";
     }
     if (err?.message?.includes("not configured")) {
-      return "Ключ OpenRouter не задан на сервере. Проверьте переменные окружения.";
+      return "Ключ AI не задан на сервере. Проверьте переменные окружения.";
     }
     return err?.message || "Ошибка запроса";
   };
@@ -64,14 +64,14 @@ export default function ChatBot() {
     setIsSending(true);
 
     try {
-      const reply = await chatWithOpenRouter({
+      const reply = await chatWithAI({
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...nextMessages],
         signal: controller.signal,
       });
 
       setMessages([...nextMessages, { role: "assistant", content: reply }]);
     } catch (err) {
-      setError(`${formatOpenRouterError(err)} Попробуйте еще раз.`);
+      setError(`${formatAIError(err)} Попробуйте еще раз.`);
     } finally {
       setIsSending(false);
     }

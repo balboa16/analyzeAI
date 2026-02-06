@@ -10,7 +10,7 @@ import {
   normalizeAnalysis,
   sanitizeAnalysisText,
 } from "../utils/analysisEngine";
-import { analyzeWithOpenRouter } from "../utils/aiProviders";
+import { analyzeWithAI } from "../utils/aiProviders";
 import { extractTextFromFile } from "../utils/extractText";
 import { generatePdfReport } from "../utils/pdfReport";
 
@@ -179,18 +179,18 @@ export default function Demo() {
 
     let inputText = "";
 
-    const formatOpenRouterError = (error) => {
+    const formatAIError = (error) => {
       if (error?.status === 401 || error?.status === 403) {
-        return "Ключ OpenRouter не настроен или недействителен.";
+        return "Ключ AI не настроен или недействителен.";
       }
       if (error?.status === 429) {
         return "AI временно недоступен (высокая нагрузка). Показан локальный анализ.";
       }
       if (error?.status === 404) {
-        return "Модель OpenRouter недоступна. Показали локальный анализ по распознанным данным.";
+        return "Модель AI недоступна. Показан локальный анализ по распознанным данным.";
       }
       if (error?.message?.includes("not configured")) {
-        return "Ключ OpenRouter не задан на сервере. Проверьте переменные окружения.";
+        return "Ключ AI не задан на сервере. Проверьте переменные окружения.";
       }
       return error?.message || "Ошибка анализа";
     };
@@ -205,14 +205,14 @@ export default function Demo() {
       let result = null;
 
       try {
-        result = await analyzeWithOpenRouter({
+        result = await analyzeWithAI({
           text: inputText,
           signal: controller.signal,
         });
       } catch (innerError) {
         if (innerError?.code === "INVALID_JSON") {
           const retryText = sanitizeAnalysisText(inputText, { maxChars: 2500 });
-          result = await analyzeWithOpenRouter({
+          result = await analyzeWithAI({
             text: retryText || inputText,
             signal: controller.signal,
             strict: true,
@@ -252,7 +252,7 @@ export default function Demo() {
       const fallback = buildRuleBasedAnalysis(inputText);
       fallback.source = { provider: "Fallback", model: "Rule-based" };
       setAnalysis(fallback);
-      const errorMessage = formatOpenRouterError(error);
+      const errorMessage = formatAIError(error);
       const suffix = errorMessage.includes("локальный анализ")
         ? ""
         : " Показан локальный анализ по распознанным данным.";

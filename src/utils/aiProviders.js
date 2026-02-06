@@ -4,7 +4,7 @@ import {
   safeParseJson,
 } from "./analysisEngine";
 
-export const DEFAULT_OPENROUTER_MODEL = "google/gemma-3-27b-it:free";
+export const DEFAULT_MODEL = "gpt-5-mini";
 
 const systemMessage =
   "Ты медицинский аналитик. Отвечай структурированно и по существу, без диагнозов. Выдавай только JSON.";
@@ -17,7 +17,7 @@ const buildMessages = (text, strict = false) => [
 
 const parseApiError = async (response) => {
   const raw = await response.text();
-  let message = `OpenRouter недоступен (HTTP ${response.status})`;
+  let message = `AI-сервис недоступен (HTTP ${response.status})`;
 
   if (raw) {
     try {
@@ -35,14 +35,8 @@ const parseApiError = async (response) => {
   return error;
 };
 
-const callOpenRouterApi = async ({
-  messages,
-  model,
-  temperature,
-  maxTokens,
-  signal,
-}) => {
-  const response = await fetch("/api/openrouter", {
+const callApi = async ({ messages, model, temperature, maxTokens, signal }) => {
+  const response = await fetch("/api/openai", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -64,13 +58,13 @@ const callOpenRouterApi = async ({
   return data?.content || "";
 };
 
-export const analyzeWithOpenRouter = async ({
+export const analyzeWithAI = async ({
   text,
   model,
   signal,
   strict = false,
 }) => {
-  const content = await callOpenRouterApi({
+  const content = await callApi({
     messages: buildMessages(text, strict),
     model,
     temperature: 0.2,
@@ -87,13 +81,13 @@ export const analyzeWithOpenRouter = async ({
   }
 
   return normalizeAnalysis(parsed, {
-    provider: "OpenRouter",
-    model: model || DEFAULT_OPENROUTER_MODEL,
+    provider: "OpenAI",
+    model: model || DEFAULT_MODEL,
   });
 };
 
-export const chatWithOpenRouter = async ({ messages, model, signal }) => {
-  const content = await callOpenRouterApi({
+export const chatWithAI = async ({ messages, model, signal }) => {
+  const content = await callApi({
     messages,
     model,
     temperature: 0.3,
