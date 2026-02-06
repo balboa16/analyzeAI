@@ -4,7 +4,7 @@ import {
   safeParseJson,
 } from "./analysisEngine";
 
-export const DEFAULT_OPENROUTER_MODEL = "google/gemini-2.0-flash-exp:free";
+export const DEFAULT_OPENROUTER_MODEL = "google/gemma-3-27b-it:free";
 
 const systemMessage =
   "Ты медицинский аналитик. Отвечай структурированно и по существу, без диагнозов. Выдавай только JSON.";

@@ -1,5 +1,5 @@
 const DEFAULT_MODEL =
-  process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-exp:free";
+  process.env.OPENROUTER_MODEL || "google/gemma-3-27b-it:free";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
