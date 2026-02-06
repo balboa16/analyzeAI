@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     model: model || DEFAULT_MODEL,
     messages,
     temperature: typeof temperature === "number" ? temperature : 0.2,
-    max_tokens: typeof max_tokens === "number" ? max_tokens : 900,
+    max_completion_tokens: typeof max_tokens === "number" ? max_tokens : 900,
   };
 
   try {
