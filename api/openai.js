@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
   }
 
-  const { messages, model } = body;
+  const { messages, model, max_tokens } = body;
   if (!Array.isArray(messages) || messages.length === 0) {
     res.status(400).json({ error: "messages is required" });
     return;
@@ -32,6 +32,7 @@ export default async function handler(req, res) {
   const payload = {
     model: usedModel,
     messages,
+    max_completion_tokens: typeof max_tokens === "number" ? max_tokens : 900,
   };
 
   try {

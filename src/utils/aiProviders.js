@@ -35,7 +35,7 @@ const parseApiError = async (response) => {
   return error;
 };
 
-const callApi = async ({ messages, model, signal }) => {
+const callApi = async ({ messages, model, maxTokens, signal }) => {
   const response = await fetch("/api/openai", {
     method: "POST",
     headers: {
@@ -44,6 +44,7 @@ const callApi = async ({ messages, model, signal }) => {
     body: JSON.stringify({
       messages,
       model,
+      max_tokens: maxTokens,
     }),
     signal,
   });
@@ -65,6 +66,7 @@ export const analyzeWithAI = async ({
   const content = await callApi({
     messages: buildMessages(text, strict),
     model,
+    maxTokens: 900,
     signal,
   });
 
@@ -86,6 +88,7 @@ export const chatWithAI = async ({ messages, model, signal }) => {
   const content = await callApi({
     messages,
     model,
+    maxTokens: 500,
     signal,
   });
 
