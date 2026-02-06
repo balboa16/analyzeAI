@@ -11,7 +11,7 @@ export const productsConfig = [
     tag: "Популярно",
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
-    showInCards: true
+    showInCards: true,
   },
   {
     id: "checkup",
@@ -19,11 +19,15 @@ export const productsConfig = [
     purpose: "Полный обзор состояния организма.",
     price_from: 6900,
     duration: "1 визит",
-    bullets: ["Комплекс под возраст", "Все в одном визите", "Расшифровка включена"],
+    bullets: [
+      "Комплекс под возраст",
+      "Все в одном визите",
+      "Расшифровка включена",
+    ],
     tag: "Комплекс",
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
-    showInCards: true
+    showInCards: true,
   },
   {
     id: "plan",
@@ -35,7 +39,7 @@ export const productsConfig = [
     tag: "План",
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
-    showInCards: false
+    showInCards: true,
   },
   {
     id: "clinic",
@@ -47,6 +51,6 @@ export const productsConfig = [
     tag: "Без комиссии",
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
-    showInCards: true
-  }
+    showInCards: true,
+  },
 ];

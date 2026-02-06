@@ -2,9 +2,9 @@
 import Badge from "../components/Badge";
 
 const stats = [
-  { value: "120K+", label: "пользователей по Кыргызстану" },
+  { value: "10+", label: "типов анализов" },
   { value: "2 мин", label: "среднее время анализа" },
-  { value: "24/7", label: "доступность сервиса" }
+  { value: "24/7", label: "доступность сервиса" },
 ];
 
 const heroBadges = ["Конфиденциально", "Понятно пациенту", "PDF для врача"];
@@ -12,7 +12,7 @@ const heroBadges = ["Конфиденциально", "Понятно пацие
 const previewMetrics = [
   { name: "Витамин D", value: "22 нг/мл", note: "Ниже нормы", tone: "warning" },
   { name: "Глюкоза", value: "5.1 ммоль/л", note: "В норме", tone: "success" },
-  { name: "АСТ", value: "42 ЕД/л", note: "Выше нормы", tone: "danger" }
+  { name: "АСТ", value: "42 ЕД/л", note: "Выше нормы", tone: "danger" },
 ];
 
 export default function Hero() {
@@ -20,7 +20,10 @@ export default function Hero() {
     <section className="section-pad pt-20 md:pt-24" id="top">
       <div className="container grid gap-10 lg:grid-cols-[1.1fr,0.9fr] lg:items-start">
         <div className="flex flex-col gap-6">
-          <span className="pill animate-fade-up" style={{ animationDelay: "0ms" }}>
+          <span
+            className="pill animate-fade-up"
+            style={{ animationDelay: "0ms" }}
+          >
             Официальный сервис SAPATLAB
           </span>
           <h1
@@ -33,8 +36,8 @@ export default function Hero() {
             className="text-base text-muted md:text-lg animate-fade-up"
             style={{ animationDelay: "140ms" }}
           >
-            Загрузите PDF или фото результатов. Получите понятный вывод и рекомендации, что делать
-            дальше.
+            Загрузите PDF или фото результатов. Получите понятный вывод и
+            рекомендации, что делать дальше.
           </p>
           <div
             className="flex flex-wrap gap-2 animate-fade-up"
@@ -50,10 +53,15 @@ export default function Hero() {
             className="flex flex-col gap-3 sm:flex-row sm:items-center animate-fade-up"
             style={{ animationDelay: "220ms" }}
           >
-            <Button as="a" href="#products" className="w-full sm:w-auto">
+            <Button as="a" href="#demo" className="w-full sm:w-auto">
               Загрузить анализы
             </Button>
-            <Button as="a" href="#report" variant="secondary" className="w-full sm:w-auto">
+            <Button
+              as="a"
+              href="#report"
+              variant="secondary"
+              className="w-full sm:w-auto"
+            >
               Посмотреть пример отчёта
             </Button>
           </div>
@@ -97,7 +105,9 @@ export default function Hero() {
                     className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-stroke bg-white px-4 py-3"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-ink">{metric.name}</p>
+                      <p className="text-sm font-semibold text-ink">
+                        {metric.name}
+                      </p>
                       <p className="text-xs text-muted">{metric.value}</p>
                     </div>
                     <Badge label={metric.note} tone={metric.tone} />

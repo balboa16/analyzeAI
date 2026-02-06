@@ -1,4 +1,5 @@
-const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || "google/gemma-3-27b-it:free";
+const DEFAULT_MODEL =
+  process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-exp:free";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -31,7 +32,7 @@ export default async function handler(req, res) {
     model: model || DEFAULT_MODEL,
     messages,
     temperature: typeof temperature === "number" ? temperature : 0.2,
-    max_tokens: typeof max_tokens === "number" ? max_tokens : 900
+    max_tokens: typeof max_tokens === "number" ? max_tokens : 900,
   };
 
   const referer =
@@ -41,16 +42,19 @@ export default async function handler(req, res) {
     "https://analyze-ai-six.vercel.app";
 
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": referer,
-        "X-Title": process.env.OPENROUTER_APP_NAME || "AnalizAI"
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+          "HTTP-Referer": referer,
+          "X-Title": process.env.OPENROUTER_APP_NAME || "AnalizAI",
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload)
-    });
+    );
 
     const raw = await response.text();
     if (!response.ok) {
@@ -69,7 +73,8 @@ export default async function handler(req, res) {
     const content = data?.choices?.[0]?.message?.content || "";
     res.status(200).json({ content });
   } catch (error) {
-    res.status(500).json({ error: error?.message || "OpenRouter request failed" });
+    res
+      .status(500)
+      .json({ error: error?.message || "OpenRouter request failed" });
   }
 }
-
