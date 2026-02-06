@@ -12,8 +12,8 @@ export default function ChatBot() {
     {
       role: "assistant",
       content:
-        "Здравствуйте! Я могу помочь разобраться с результатами анализов. Напишите, что вас беспокоит или какие показатели хотите обсудить."
-    }
+        "Здравствуйте! Я могу помочь разобраться с результатами анализов. Напишите, что вас беспокоит или какие показатели хотите обсудить.",
+    },
   ]);
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
@@ -33,7 +33,7 @@ export default function ChatBot() {
       return "Ключ OpenRouter не настроен или недействителен.";
     }
     if (err?.status === 429) {
-      return "Превышен лимит запросов OpenRouter. Попробуйте позже.";
+      return "AI-консультант временно недоступен из-за высокой нагрузки. Попробуйте через 10–15 минут или используйте расшифровку анализов выше.";
     }
     if (err?.status === 404) {
       return "Модель OpenRouter недоступна. Попробуйте другую модель или позже.";
@@ -66,7 +66,7 @@ export default function ChatBot() {
     try {
       const reply = await chatWithOpenRouter({
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...nextMessages],
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       setMessages([...nextMessages, { role: "assistant", content: reply }]);
@@ -94,8 +94,8 @@ export default function ChatBot() {
             subtitle="Напишите вопрос о вашем самочувствии или уточните показатели — бот ответит на человеческом языке."
           />
           <p className="text-xs text-muted">
-            AI отвечает автоматически и простым языком. Советы носят информационный характер и не
-            заменяют консультацию врача.
+            AI отвечает автоматически и простым языком. Советы носят
+            информационный характер и не заменяют консультацию врача.
           </p>
         </div>
 
@@ -130,7 +130,9 @@ export default function ChatBot() {
               onKeyDown={handleKeyDown}
             />
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-muted">Shift + Enter для новой строки</p>
+              <p className="text-xs text-muted">
+                Shift + Enter для новой строки
+              </p>
               <Button
                 type="button"
                 onClick={handleSend}

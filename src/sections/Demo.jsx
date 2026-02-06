@@ -8,7 +8,7 @@ import {
   buildRuleBasedAnalysis,
   extractMetricsFromText,
   normalizeAnalysis,
-  sanitizeAnalysisText
+  sanitizeAnalysisText,
 } from "../utils/analysisEngine";
 import { analyzeWithOpenRouter } from "../utils/aiProviders";
 import { extractTextFromFile } from "../utils/extractText";
@@ -17,7 +17,7 @@ import { generatePdfReport } from "../utils/pdfReport";
 const tabs = [
   { id: "file", label: "Загрузить файл" },
   { id: "manual", label: "Ввести вручную" },
-  { id: "sample", label: "Пример анализа" }
+  { id: "sample", label: "Пример анализа" },
 ];
 
 const MAX_FILE_SIZE_MB = 10;
@@ -27,43 +27,43 @@ const metricGroups = [
     id: "cbc",
     title: "Общий анализ крови",
     match:
-      /лейкоцит|эритроцит|гемоглобин|гематокрит|тромбоцит|нейтрофил|лимфоцит|моноцит|эозинофил|базофил|соэ|сое|wbc|rbc|hgb|hct|plt|mcv|mch|mchc|rdw/i
+      /лейкоцит|эритроцит|гемоглобин|гематокрит|тромбоцит|нейтрофил|лимфоцит|моноцит|эозинофил|базофил|соэ|сое|wbc|rbc|hgb|hct|plt|mcv|mch|mchc|rdw/i,
   },
   {
     id: "bio",
     title: "Биохимия",
     match:
-      /глюкоз|холестерин|алт|аст|креатинин|мочевин|билирубин|альбумин|белок|липид|триглицерид|ферритин|железо/i
+      /глюкоз|холестерин|алт|аст|креатинин|мочевин|билирубин|альбумин|белок|липид|триглицерид|ферритин|железо/i,
   },
   {
     id: "hormones",
     title: "Гормоны",
     match:
-      /ттг|т3|т4|тестостерон|эстрадиол|пролактин|фсг|лг|прогестерон|инсулин|амг|dhea|дгэа|тирео/i
+      /ттг|т3|т4|тестостерон|эстрадиол|пролактин|фсг|лг|прогестерон|инсулин|амг|dhea|дгэа|тирео/i,
   },
   {
     id: "vitamins",
     title: "Витамины",
-    match: /витамин|b12|фолат|фоли/i
-  }
+    match: /витамин|b12|фолат|фоли/i,
+  },
 ];
 
 const nextStepCards = [
   {
     title: "Онлайн консультация врача",
     text: "Разбор отчёта и ответы на вопросы за 15 минут.",
-    cta: "Записаться"
+    cta: "Записаться",
   },
   {
     title: "Пакет расширенной биохимии",
     text: "Уточнить обмен веществ и риски отклонений.",
-    cta: "Выбрать пакет"
+    cta: "Выбрать пакет",
   },
   {
     title: "Персональный план",
     text: "Питание и рекомендации с контролем на 30 дней.",
-    cta: "Получить план"
-  }
+    cta: "Получить план",
+  },
 ];
 
 const statusOrder = { normal: 0, warning: 1, danger: 2 };
@@ -81,7 +81,10 @@ export default function Demo() {
   const [manualInput, setManualInput] = useState("");
   const [extractedText, setExtractedText] = useState("");
   const [isExtracting, setIsExtracting] = useState(false);
-  const [extractStatus, setExtractStatus] = useState({ stage: "", progress: 0 });
+  const [extractStatus, setExtractStatus] = useState({
+    stage: "",
+    progress: 0,
+  });
 
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -113,7 +116,7 @@ export default function Demo() {
 
     if (selected && selected.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
       setFileError(
-        `Файл больше ${MAX_FILE_SIZE_MB} МБ. Пожалуйста, загрузите файл меньшего размера.`
+        `Файл больше ${MAX_FILE_SIZE_MB} МБ. Пожалуйста, загрузите файл меньшего размера.`,
       );
     }
   };
@@ -142,7 +145,7 @@ export default function Demo() {
       const text = await extractTextFromFile(file, (status) => {
         setExtractStatus({
           stage: status.stage || "Обработка",
-          progress: status.progress || 0
+          progress: status.progress || 0,
         });
       });
 
@@ -150,7 +153,7 @@ export default function Demo() {
       return text;
     } catch (error) {
       setFileError(
-        "Не удалось распознать файл. Попробуйте PDF с текстовым слоем или ручной ввод."
+        "Не удалось распознать файл. Попробуйте PDF с текстовым слоем или ручной ввод.",
       );
       return "";
     } finally {
@@ -181,7 +184,7 @@ export default function Demo() {
         return "Ключ OpenRouter не настроен или недействителен.";
       }
       if (error?.status === 429) {
-        return "Превышен лимит запросов OpenRouter. Попробуйте позже.";
+        return "AI временно недоступен (высокая нагрузка). Показан локальный анализ.";
       }
       if (error?.status === 404) {
         return "Модель OpenRouter недоступна. Показали локальный анализ по распознанным данным.";
@@ -204,7 +207,7 @@ export default function Demo() {
       try {
         result = await analyzeWithOpenRouter({
           text: inputText,
-          signal: controller.signal
+          signal: controller.signal,
         });
       } catch (innerError) {
         if (innerError?.code === "INVALID_JSON") {
@@ -212,7 +215,7 @@ export default function Demo() {
           result = await analyzeWithOpenRouter({
             text: retryText || inputText,
             signal: controller.signal,
-            strict: true
+            strict: true,
           });
         } else {
           throw innerError;
@@ -228,11 +231,17 @@ export default function Demo() {
           title: result?.title || fallback.title,
           summary: result?.summary || fallback.summary,
           metrics: result?.metrics?.length ? result.metrics : fallback.metrics,
-          explanations: result?.explanations?.length ? result.explanations : fallback.explanations,
+          explanations: result?.explanations?.length
+            ? result.explanations
+            : fallback.explanations,
           diet: result?.diet?.length ? result.diet : fallback.diet,
-          lifestyle: result?.lifestyle?.length ? result.lifestyle : fallback.lifestyle,
-          vitamins: result?.vitamins?.length ? result.vitamins : fallback.vitamins,
-          caution: result?.caution || fallback.caution
+          lifestyle: result?.lifestyle?.length
+            ? result.lifestyle
+            : fallback.lifestyle,
+          vitamins: result?.vitamins?.length
+            ? result.vitamins
+            : fallback.vitamins,
+          caution: result?.caution || fallback.caution,
         };
 
         result = normalizeAnalysis(merged, result?.source || fallback?.source);
@@ -277,7 +286,8 @@ export default function Demo() {
     }
 
     return analysis.metrics.reduce((acc, metric) => {
-      const current = statusOrder[metric.status] !== undefined ? metric.status : "normal";
+      const current =
+        statusOrder[metric.status] !== undefined ? metric.status : "normal";
       return statusOrder[current] > statusOrder[acc] ? current : acc;
     }, "normal");
   }, [analysis]);
@@ -296,7 +306,7 @@ export default function Demo() {
         `Показатели внимания: ${flagged
           .slice(0, 3)
           .map((item) => item.name)
-          .join(", ")}.`
+          .join(", ")}.`,
       );
     } else if (metrics.length) {
       insights.push("Ключевые показатели находятся в пределах нормы.");
@@ -350,14 +360,16 @@ export default function Demo() {
       return [];
     }
 
-    const flaggedCount = analysis.metrics.filter((metric) => metric.status !== "normal").length;
+    const flaggedCount = analysis.metrics.filter(
+      (metric) => metric.status !== "normal",
+    ).length;
 
     return [
       flaggedCount
         ? "Пересдать отклонённые показатели через 2-4 недели."
         : "Плановый контроль через 6-12 месяцев.",
       "Досдать анализы по рекомендации врача.",
-      "Консультация врача при симптомах или сомнениях."
+      "Консультация врача при симптомах или сомнениях.",
     ];
   }, [analysis]);
 
@@ -393,7 +405,9 @@ export default function Demo() {
                   className="relative flex min-h-[160px] cursor-pointer flex-col gap-3 rounded-[16px] border border-dashed border-stroke bg-white px-4 py-5 text-sm transition hover:border-[rgba(31,127,92,0.4)] focus-within:border-[rgba(31,127,92,0.6)] focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-bg"
                   htmlFor="analysis-file"
                 >
-                  <span className="font-semibold text-ink">Выберите файл анализа</span>
+                  <span className="font-semibold text-ink">
+                    Выберите файл анализа
+                  </span>
                   <input
                     id="analysis-file"
                     type="file"
@@ -404,11 +418,17 @@ export default function Demo() {
                   <span className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-[12px] border border-stroke bg-white px-4 text-xs font-semibold text-ink">
                     Выбрать файл
                   </span>
-                  <span className="text-xs text-muted">{demoInput.fileHint}</span>
+                  <span className="text-xs text-muted">
+                    {demoInput.fileHint}
+                  </span>
                   {fileName ? (
-                    <span className="text-xs font-semibold text-ink">Файл: {fileName}</span>
+                    <span className="text-xs font-semibold text-ink">
+                      Файл: {fileName}
+                    </span>
                   ) : null}
-                  {fileError ? <span className="text-xs text-danger">{fileError}</span> : null}
+                  {fileError ? (
+                    <span className="text-xs text-danger">{fileError}</span>
+                  ) : null}
                 </label>
               ) : null}
 
@@ -417,7 +437,9 @@ export default function Demo() {
                   className="flex flex-col gap-3 rounded-[16px] border border-stroke bg-white px-4 py-5 text-sm"
                   htmlFor="analysis-manual"
                 >
-                  <span className="font-semibold text-ink">Введите показатели</span>
+                  <span className="font-semibold text-ink">
+                    Введите показатели
+                  </span>
                   <textarea
                     id="analysis-manual"
                     className="min-h-[140px] rounded-[12px] border border-stroke px-4 py-3 text-sm text-ink focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
@@ -431,7 +453,9 @@ export default function Demo() {
               {mode === "sample" ? (
                 <div className="rounded-[16px] border border-stroke bg-white px-4 py-5 text-sm">
                   <p className="font-semibold text-ink">Демо-анализ</p>
-                  <p className="mt-2 text-xs text-muted">{demoInput.sampleText}</p>
+                  <p className="mt-2 text-xs text-muted">
+                    {demoInput.sampleText}
+                  </p>
                 </div>
               ) : null}
 
@@ -446,7 +470,9 @@ export default function Demo() {
                   <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-stroke">
                     <div
                       className="h-2 rounded-full bg-accent transition"
-                      style={{ width: `${Math.round(extractStatus.progress * 100)}%` }}
+                      style={{
+                        width: `${Math.round(extractStatus.progress * 100)}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -484,12 +510,15 @@ export default function Demo() {
             <div className="grid gap-6" aria-live="polite">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Отчёт SAPATLAB</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                    Отчёт SAPATLAB
+                  </p>
                   <h3 className="text-2xl text-ink">{analysis.title}</h3>
                   <p className="text-xs text-muted">{analysis.updatedAt}</p>
                   {analysis.source?.provider ? (
                     <p className="text-[11px] text-muted">
-                      Источник: {analysis.source.provider} · {analysis.source.model}
+                      Источник: {analysis.source.provider} ·{" "}
+                      {analysis.source.model}
                     </p>
                   ) : null}
                 </div>
@@ -507,7 +536,9 @@ export default function Demo() {
               <div className="grid gap-5">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-muted">Показатели</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                      Показатели
+                    </p>
                     <h4 className="text-xl text-ink">Группы показателей</h4>
                   </div>
                   <span className="text-xs text-muted">
@@ -518,12 +549,19 @@ export default function Demo() {
                   groupedMetrics.map((group) => (
                     <div key={group.title} className="grid gap-3">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-ink">{group.title}</p>
-                        <span className="text-xs text-muted">{group.items.length} шт.</span>
+                        <p className="text-sm font-semibold text-ink">
+                          {group.title}
+                        </p>
+                        <span className="text-xs text-muted">
+                          {group.items.length} шт.
+                        </span>
                       </div>
                       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                         {group.items.map((metric) => (
-                          <MetricCard key={`${metric.name}-${metric.value}`} metric={metric} />
+                          <MetricCard
+                            key={`${metric.name}-${metric.value}`}
+                            metric={metric}
+                          />
                         ))}
                       </div>
                     </div>
@@ -537,7 +575,9 @@ export default function Demo() {
 
               <div className="card bg-white">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Рекомендации</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                    Рекомендации
+                  </p>
                   <h4 className="mt-2 text-xl text-ink">Что можно сделать</h4>
                 </div>
                 <ul className="mt-3 grid gap-2 text-sm text-muted">
@@ -552,8 +592,12 @@ export default function Demo() {
 
               <div className="card bg-white">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Питание и режим</p>
-                  <h4 className="mt-2 text-xl text-ink">Подробные рекомендации</h4>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                    Питание и режим
+                  </p>
+                  <h4 className="mt-2 text-xl text-ink">
+                    Подробные рекомендации
+                  </h4>
                 </div>
                 <div className="mt-4 grid gap-4 md:grid-cols-3">
                   <div className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] px-4 py-4">
@@ -568,7 +612,9 @@ export default function Demo() {
                     </ul>
                   </div>
                   <div className="rounded-[12px] border border-stroke bg-[var(--bg-soft)] px-4 py-4">
-                    <p className="text-sm font-semibold text-ink">Образ жизни</p>
+                    <p className="text-sm font-semibold text-ink">
+                      Образ жизни
+                    </p>
                     <ul className="mt-2 grid gap-2 text-xs text-muted">
                       {(analysis.lifestyle || []).map((item) => (
                         <li key={item} className="flex items-start gap-2">
@@ -595,7 +641,9 @@ export default function Demo() {
               {analysis.dietPlan?.length ? (
                 <div className="rounded-[16px] border border-stroke bg-white p-6 shadow-card">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-muted">План питания</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                      План питания
+                    </p>
                     <h4 className="mt-2 text-xl text-ink">Пример на неделю</h4>
                   </div>
                   <ul className="mt-4 grid gap-2 text-sm text-muted">
@@ -611,16 +659,24 @@ export default function Demo() {
 
               <div className="rounded-[16px] border border-stroke bg-[var(--bg-soft)] p-6">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted">Следующий шаг</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                    Следующий шаг
+                  </p>
                   <h4 className="mt-2 text-2xl text-ink">Следующий шаг</h4>
                   <p className="mt-2 text-sm text-muted">
-                    Чтобы уточнить картину, можно досдать или выбрать готовый пакет.
+                    Чтобы уточнить картину, можно досдать или выбрать готовый
+                    пакет.
                   </p>
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
                   {nextStepCards.map((card) => (
-                    <div key={card.title} className="rounded-[12px] border border-stroke bg-white p-4">
-                      <p className="text-sm font-semibold text-ink">{card.title}</p>
+                    <div
+                      key={card.title}
+                      className="rounded-[12px] border border-stroke bg-white p-4"
+                    >
+                      <p className="text-sm font-semibold text-ink">
+                        {card.title}
+                      </p>
                       <p className="mt-2 text-xs text-muted">{card.text}</p>
                       <Button
                         as="a"
@@ -656,7 +712,8 @@ export default function Demo() {
                 AI
               </div>
               <p className="text-sm">
-                Заполните данные и нажмите «Получить расшифровку», чтобы увидеть результат.
+                Заполните данные и нажмите «Получить расшифровку», чтобы увидеть
+                результат.
               </p>
               {isAnalyzing ? (
                 <div className="w-full max-w-xs overflow-hidden rounded-full bg-stroke">
@@ -669,7 +726,8 @@ export default function Demo() {
           {extractedText ? (
             <details className="mt-6 rounded-[12px] border border-stroke bg-white px-4 py-3 text-xs text-muted">
               <summary className="cursor-pointer font-semibold text-ink">
-                Посмотреть распознанный текст ({recognizedMetrics.length} показателей)
+                Посмотреть распознанный текст ({recognizedMetrics.length}{" "}
+                показателей)
               </summary>
               <p className="mt-3 whitespace-pre-wrap">{extractedText}</p>
             </details>
