@@ -19,6 +19,8 @@
   --danger-soft: #fbeae8;
   --bg-soft: rgba(247, 249, 248, 0.72);
   --bg-softer: rgba(247, 249, 248, 0.45);
+  --whatsapp: #25d366;
+  --whatsapp-hover: #1da851;
 }
 
 * {
@@ -37,6 +39,11 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.6;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.menu-open {
+  overflow: hidden;
 }
 
 img {
@@ -50,7 +57,7 @@ a {
 }
 
 section[id] {
-  scroll-margin-top: 96px;
+  scroll-margin-top: 80px;
 }
 
 ::selection {
@@ -70,7 +77,7 @@ section[id] {
 
 @layer components {
   .section-pad {
-    @apply py-10 md:py-12 lg:py-16;
+    @apply py-8 sm:py-10 md:py-12 lg:py-16;
   }
 
   .glass {
@@ -89,7 +96,8 @@ section[id] {
   }
 
   .btn-primary:disabled,
-  .btn-secondary:disabled {
+  .btn-secondary:disabled,
+  .btn-whatsapp:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
@@ -118,12 +126,21 @@ section[id] {
     color: var(--accent);
   }
 
+  .btn-whatsapp {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[12px] px-6 py-3 text-sm font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+    background: var(--whatsapp);
+  }
+
+  .btn-whatsapp:hover {
+    background: var(--whatsapp-hover);
+  }
+
   .pill {
-    @apply inline-flex items-center gap-2 rounded-full border border-stroke bg-white px-3 py-1 text-[11px] font-semibold text-muted;
+    @apply inline-flex items-center gap-2 rounded-full border border-stroke bg-white px-3 py-1 text-xs font-semibold text-muted;
   }
 
   .card {
-    @apply rounded-[16px] border border-stroke bg-white px-6 py-6 shadow-card;
+    @apply rounded-[16px] border border-stroke bg-white px-5 py-5 shadow-card sm:px-6 sm:py-6;
   }
 
   .badge {
@@ -164,6 +181,91 @@ section[id] {
   }
 
   .floating-orb {
-    background: radial-gradient(circle at 30% 30%, rgba(31, 127, 92, 0.12), transparent 60%);
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(31, 127, 92, 0.12),
+      transparent 60%
+    );
+  }
+
+  .snap-x-mandatory {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .snap-start {
+    scroll-snap-align: start;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* FAQ chevron animation */
+details summary {
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-chevron {
+  transition: transform 0.2s ease;
+}
+
+/* Sticky bottom bar */
+.sticky-bottom-bar {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Pulse animation for CTA */
+@keyframes pulse-accent {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(31, 127, 92, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(31, 127, 92, 0);
+  }
+}
+
+.pulse-cta {
+  animation: pulse-accent 2s infinite;
+}
+
+/* Spinner */
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -80,11 +80,15 @@ export async function generatePdfReport(analysis) {
     doc.rect(0, 0, pageWidth, 76, "F");
     doc.addImage(logoData, "PNG", margin, 18, 90, 40);
     doc.setTextColor(...baseText);
-    doc.setFontSize(18);
-    doc.text("Расшифровка медицинских анализов", margin + 110, 42);
-    doc.setFontSize(10);
+    doc.setFontSize(16);
+    doc.text("Расшифровка медицинских анализов", margin + 110, 40);
+    doc.setFontSize(9);
     doc.setTextColor(...muted);
-    doc.text(`SAPATLAB · ${new Date().toLocaleDateString("ru-RU")}`, margin + 110, 58);
+    doc.text(
+      `SAPATLAB \u00B7 ${new Date().toLocaleDateString("ru-RU")}`,
+      margin + 110,
+      56,
+    );
   };
 
   const ensureSpace = (needed) => {
@@ -98,8 +102,7 @@ export async function generatePdfReport(analysis) {
 
   const safeText = (value) => (value == null ? "" : String(value));
 
-  const wrapText = (text, width) =>
-    doc.splitTextToSize(safeText(text), width);
+  const wrapText = (text, width) => doc.splitTextToSize(safeText(text), width);
 
   const textHeight = (lines) => doc.getTextDimensions(lines).h;
 
@@ -127,7 +130,7 @@ export async function generatePdfReport(analysis) {
     } = {},
   ) => {
     const resolvedFontSize = fontSize ?? doc.getFontSize();
-    const bullet = "•";
+    const bullet = "\u2022";
     const textX = x + bulletIndent;
     const textWidth = width - bulletIndent;
 
@@ -168,14 +171,16 @@ export async function generatePdfReport(analysis) {
 
     if (flagged.length) {
       insights.push(
-        `Показатели внимания: ${flagged
+        `\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u0438 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u044F: ${flagged
           .slice(0, 3)
           .map((item) => safeText(item?.name).trim())
           .filter(Boolean)
           .join(", ")}.`,
       );
     } else if (metrics.length) {
-      insights.push("Ключевые показатели находятся в пределах нормы.");
+      insights.push(
+        "\u041A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u0438 \u043D\u0430\u0445\u043E\u0434\u044F\u0442\u0441\u044F \u0432 \u043F\u0440\u0435\u0434\u0435\u043B\u0430\u0445 \u043D\u043E\u0440\u043C\u044B.",
+      );
     }
 
     const summary = safeText(value?.summary).trim();
@@ -190,7 +195,9 @@ export async function generatePdfReport(analysis) {
     }
 
     if (insights.length < 3) {
-      insights.push("Отчёт можно показать врачу или сохранить для истории.");
+      insights.push(
+        "\u041E\u0442\u0447\u0451\u0442 \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0440\u0430\u0447\u0443 \u0438\u043B\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0434\u043B\u044F \u0438\u0441\u0442\u043E\u0440\u0438\u0438.",
+      );
     }
 
     return insights.filter(Boolean).slice(0, 3);
@@ -245,22 +252,24 @@ export async function generatePdfReport(analysis) {
   ensureSpace(84);
   doc.setTextColor(...muted);
   doc.setFontSize(9);
-  doc.text("ОТЧЕТ SAPATLAB", margin, y, { baseline: "top" });
+  doc.text("\u041E\u0422\u0427\u0415\u0422 SAPATLAB", margin, y, {
+    baseline: "top",
+  });
   drawStatusPill(overallStatus, pageWidth - margin, y - 2);
   y += 18;
 
   doc.setTextColor(...baseText);
-  doc.setFontSize(20);
+  doc.setFontSize(18);
   drawWrapped(analysis?.title, margin, maxWidth, { extraSpacing: 8 });
 
   const updatedAt = safeText(analysis?.updatedAt).trim();
   const sourceLine = analysis?.source?.provider
-    ? `Источник: ${analysis.source.provider} · ${safeText(analysis.source.model)}`
+    ? `\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: ${analysis.source.provider} \u00B7 ${safeText(analysis.source.model)}`
     : "";
 
   doc.setFontSize(10);
   doc.setTextColor(...muted);
-  const metaLines = [updatedAt, sourceLine].filter(Boolean).join(" · ");
+  const metaLines = [updatedAt, sourceLine].filter(Boolean).join(" \u00B7 ");
   if (metaLines) {
     drawWrapped(metaLines, margin, maxWidth, { extraSpacing: 14 });
   } else {
@@ -272,7 +281,9 @@ export async function generatePdfReport(analysis) {
   const cardPad = 16;
   const cardX = margin;
   const cardW = maxWidth;
-  const labelHeight = textHeight(["Коротко"]);
+  const labelHeight = textHeight([
+    "\u041A\u043E\u0440\u043E\u0442\u043A\u043E",
+  ]);
   const listMeasure = () => {
     const prevSize = doc.getFontSize();
     doc.setFontSize(11);
@@ -294,7 +305,9 @@ export async function generatePdfReport(analysis) {
   let cy = y + cardPad;
   doc.setFontSize(9);
   doc.setTextColor(...muted);
-  doc.text("Коротко", cardX + cardPad, cy, { baseline: "top" });
+  doc.text("\u041A\u043E\u0440\u043E\u0442\u043A\u043E", cardX + cardPad, cy, {
+    baseline: "top",
+  });
   cy += labelHeight + 10;
 
   doc.setFontSize(11);
@@ -310,87 +323,93 @@ export async function generatePdfReport(analysis) {
   cy = y;
   y = savedY + cardH + 18;
 
-  sectionTitle("Основные показатели");
+  sectionTitle(
+    "\u041E\u0441\u043D\u043E\u0432\u043D\u044B\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u0438",
+  );
 
   const rowW = maxWidth;
   const rowPadX = 14;
   const rowPadY = 12;
-  const rowGap = 10;
-  const leftW = 300;
-  const rightW = rowW - leftW - 20;
+  const rowGap = 12;
 
   metrics.forEach((metric) => {
     const status =
       statusOrder[metric?.status] !== undefined ? metric.status : "normal";
     const style = statusStyles[status] || statusStyles.normal;
-    const name = safeText(metric?.name).trim() || "—";
+    const name = safeText(metric?.name).trim() || "\u2014";
     const note = safeText(metric?.note).trim();
-    const valueText = safeText(metric?.value).trim() || "—";
+    const valueText = safeText(metric?.value).trim() || "\u2014";
     const unit = safeText(metric?.unit).trim();
     const range = safeText(metric?.range).trim();
 
+    // Full-width single-column layout
     doc.setFontSize(11);
-    const nameLines = wrapText(name, leftW);
+    const nameLines = wrapText(name, rowW - rowPadX * 2 - 100);
     const nameH = textHeight(nameLines);
 
     doc.setFontSize(9);
-    const noteLines = note ? wrapText(note, leftW) : [];
+    const noteLines = note ? wrapText(note, rowW - rowPadX * 2) : [];
     const noteH = noteLines.length ? textHeight(noteLines) : 0;
-
-    const leftH = nameH + (noteH ? 6 + noteH : 0);
 
     doc.setFontSize(12);
     const valueLine = `${valueText}${unit ? ` ${unit}` : ""}`;
     const valueH = textHeight([valueLine]);
 
     doc.setFontSize(9);
-    const rangeLine = range ? `Норма: ${range}` : "Норма: —";
-    const rangeLines = wrapText(rangeLine, rightW);
-    const rangeH = textHeight(rangeLines);
+    const rangeLine = range
+      ? `\u041D\u043E\u0440\u043C\u0430: ${range}`
+      : "\u041D\u043E\u0440\u043C\u0430: \u2014";
+    const rangeH = textHeight([rangeLine]);
 
-    const rightH = valueH + 6 + rangeH;
-    const pillH = 9 + 5 * 2;
-
-    const rowH = rowPadY * 2 + Math.max(leftH, rightH, pillH);
+    const rowH =
+      rowPadY * 2 + nameH + 6 + valueH + 4 + rangeH + (noteH ? 6 + noteH : 0);
     ensureSpace(rowH + rowGap);
 
     const rowY = y;
     doc.setFillColor(...style.soft);
     doc.roundedRect(margin, rowY, rowW, rowH, 14, 14, "F");
 
-    const contentY = rowY + rowPadY;
+    let contentY = rowY + rowPadY;
     const leftX = margin + rowPadX;
 
-    // Left
+    // Name
     doc.setFontSize(11);
     doc.setTextColor(...baseText);
     doc.text(nameLines, leftX, contentY, { baseline: "top" });
 
-    if (noteLines.length) {
-      doc.setFontSize(9);
-      doc.setTextColor(...style.ink);
-      doc.text(noteLines, leftX, contentY + nameH + 6, { baseline: "top" });
-    }
+    // Status pill
+    drawStatusPill(status, margin + rowW - rowPadX, rowY + rowPadY - 2);
 
-    // Right
-    const rightX = margin + rowPadX + leftW + 14;
+    contentY += nameH + 6;
+
+    // Value
     doc.setFontSize(12);
     doc.setTextColor(...baseText);
-    doc.text(valueLine, rightX, contentY, { baseline: "top" });
+    doc.text(valueLine, leftX, contentY, { baseline: "top" });
+    contentY += valueH + 4;
 
+    // Range
     doc.setFontSize(9);
     doc.setTextColor(...muted);
-    doc.text(rangeLines, rightX, contentY + valueH + 6, { baseline: "top" });
+    doc.text(rangeLine, leftX, contentY, { baseline: "top" });
+    contentY += rangeH;
 
-    // Pill
-    drawStatusPill(status, margin + rowW - rowPadX, rowY + rowPadY - 2);
+    // Note
+    if (noteLines.length) {
+      contentY += 6;
+      doc.setFontSize(9);
+      doc.setTextColor(...style.ink);
+      doc.text(noteLines, leftX, contentY, { baseline: "top" });
+    }
 
     y = rowY + rowH + rowGap;
   });
 
   y += 10;
   if (Array.isArray(analysis?.explanations) && analysis.explanations.length) {
-    sectionTitle("Пояснения по отклонениям");
+    sectionTitle(
+      "\u041F\u043E\u044F\u0441\u043D\u0435\u043D\u0438\u044F \u043F\u043E \u043E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u044F\u043C",
+    );
     doc.setFontSize(11);
     analysis.explanations.forEach((item) => {
       const title = safeText(item?.title).trim();
@@ -439,10 +458,14 @@ export async function generatePdfReport(analysis) {
     });
   }
 
-  sectionTitle("Рекомендации");
+  sectionTitle(
+    "\u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u0438",
+  );
 
   const drawRecGroup = (title, items) => {
-    const filtered = (items || []).map((item) => safeText(item).trim()).filter(Boolean);
+    const filtered = (items || [])
+      .map((item) => safeText(item).trim())
+      .filter(Boolean);
     if (!filtered.length) {
       return;
     }
@@ -456,16 +479,77 @@ export async function generatePdfReport(analysis) {
     y += 4;
   };
 
-  drawRecGroup("Питание", analysis?.diet);
-  drawRecGroup("Образ жизни", analysis?.lifestyle);
-  drawRecGroup("Витамины", analysis?.vitamins);
+  drawRecGroup("\u041F\u0438\u0442\u0430\u043D\u0438\u0435", analysis?.diet);
+  drawRecGroup(
+    "\u041E\u0431\u0440\u0430\u0437 \u0436\u0438\u0437\u043D\u0438",
+    analysis?.lifestyle,
+  );
+  drawRecGroup(
+    "\u0412\u0438\u0442\u0430\u043C\u0438\u043D\u044B",
+    analysis?.vitamins,
+  );
 
   const dietPlan = Array.isArray(analysis?.dietPlan) ? analysis.dietPlan : [];
   if (dietPlan.length) {
     y += 4;
-    sectionTitle("План питания на 7 дней (пример)");
+    sectionTitle(
+      "\u041F\u043B\u0430\u043D \u043F\u0438\u0442\u0430\u043D\u0438\u044F \u043D\u0430 7 \u0434\u043D\u0435\u0439 (\u043F\u0440\u0438\u043C\u0435\u0440)",
+    );
     drawBulletList(dietPlan, { fontSize: 10, lineGap: 5 });
   }
+
+  // Next step section (product CTA)
+  const hasDanger = metrics.some((m) => m?.status === "danger");
+  const hasWarning = metrics.some((m) => m?.status === "warning");
+  const warningCount = metrics.filter(
+    (m) => m?.status === "warning" || m?.status === "danger",
+  ).length;
+
+  y += 8;
+  sectionTitle(
+    "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0448\u0430\u0433",
+  );
+
+  const nextSteps = [];
+  if (hasDanger) {
+    nextSteps.push(
+      "\u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u043C \u043E\u0431\u0441\u0443\u0434\u0438\u0442\u044C \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u0441 \u0432\u0440\u0430\u0447\u043E\u043C. \u041E\u043D\u043B\u0430\u0439\u043D \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F SAPATLAB \u2014 \u043E\u0442 990 \u0441\u043E\u043C, 15 \u043C\u0438\u043D\u0443\u0442.",
+    );
+  }
+  if (warningCount >= 2) {
+    nextSteps.push(
+      "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u043D\u044B\u0439 \u0447\u0435\u043A\u0430\u043F \u043F\u043E\u0437\u0432\u043E\u043B\u0438\u0442 \u0443\u0432\u0438\u0434\u0435\u0442\u044C \u043F\u043E\u043B\u043D\u0443\u044E \u043A\u0430\u0440\u0442\u0438\u043D\u0443 \u2014 \u043E\u0442 6 900 \u0441\u043E\u043C.",
+    );
+  }
+  if (hasWarning) {
+    nextSteps.push(
+      "\u0414\u043B\u044F \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044F \u0434\u0438\u043D\u0430\u043C\u0438\u043A\u0438: \u041F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u043F\u043B\u0430\u043D \u043D\u0430 30 \u0434\u043D\u0435\u0439 \u2014 \u043E\u0442 2 400 \u0441\u043E\u043C.",
+    );
+  }
+  if (!nextSteps.length) {
+    nextSteps.push(
+      "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439\u0442\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u0440\u0435\u0436\u0438\u043C. \u041F\u0435\u0440\u0438\u043E\u0434\u0438\u0447\u0435\u0441\u043A\u0438 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0439\u0442\u0435 \u0430\u043D\u0430\u043B\u0438\u0437\u044B \u0434\u043B\u044F \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044F.",
+    );
+  }
+
+  doc.setFontSize(10);
+  doc.setTextColor(...baseText);
+  drawBulletList(nextSteps, { fontSize: 10, lineGap: 6 });
+
+  // WhatsApp contact
+  y += 6;
+  ensureSpace(50);
+  doc.setFillColor(...soft);
+  doc.roundedRect(margin, y, maxWidth, 40, 12, 12, "F");
+  doc.setFontSize(10);
+  doc.setTextColor(...accent);
+  doc.text(
+    "\u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043D\u0430\u043C \u0432 WhatsApp: wa.me/996700000000",
+    margin + 14,
+    y + 16,
+    { baseline: "top" },
+  );
+  y += 50;
 
   const caution = safeText(analysis?.caution).trim();
   if (caution) {
@@ -476,15 +560,18 @@ export async function generatePdfReport(analysis) {
     doc.setTextColor(...baseText);
   }
 
-  // Footer (page numbers)
+  // Footer (page numbers + branding)
   const pageCount = doc.getNumberOfPages();
   for (let page = 1; page <= pageCount; page += 1) {
     doc.setPage(page);
     doc.setFont("IBMPlexSans", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setTextColor(...muted);
+    doc.text("SAPATLAB \u00B7 analyze.sapatlab.kg", margin, pageHeight - 28, {
+      baseline: "top",
+    });
     doc.text(
-      `Страница ${page} из ${pageCount}`,
+      `\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 ${page} \u0438\u0437 ${pageCount}`,
       pageWidth - margin,
       pageHeight - 28,
       { align: "right", baseline: "top" },

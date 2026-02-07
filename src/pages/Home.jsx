@@ -10,6 +10,7 @@ import Products from "../sections/Products";
 import ReportExample from "../sections/ReportExample";
 import Trust from "../sections/Trust";
 import TrustMini from "../sections/TrustMini";
+import StickyMobileCTA from "../components/StickyMobileCTA";
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
         <CTA />
       </main>
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 }

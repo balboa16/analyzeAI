@@ -42,25 +42,25 @@ const icons = {
       <circle cx="12" cy="12" r="9" />
       <path d="M11 8l4 4-4 4" />
     </svg>
-  )
+  ),
 };
 
 const steps = [
   {
     icon: "upload",
     title: "Загрузите анализы",
-    text: "Фото, PDF или ручной ввод — все форматы в одном месте."
+    text: "Фото, PDF или ручной ввод — все форматы в одном месте.",
   },
   {
     icon: "report",
     title: "Получите понятный разбор",
-    text: "Понятные объяснения каждого показателя без медицинского жаргона."
+    text: "Понятные объяснения каждого показателя без медицинского жаргона.",
   },
   {
     icon: "next",
     title: "Выберите следующий шаг",
-    text: "Рекомендации, чек-ап или консультация — без лишних переходов."
-  }
+    text: "Рекомендации, чек-ап или консультация — без лишних переходов.",
+  },
 ];
 
 export default function HowItWorks() {
@@ -72,17 +72,17 @@ export default function HowItWorks() {
           title="Как это работает"
           subtitle="Мы собрали путь в три простых действия, чтобы вы не тратили время на поиски по форумам."
         />
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
           {steps.map((step, index) => (
             <div
               key={step.title}
-              className="card flex h-full flex-col gap-4 bg-white animate-fade-up"
+              className="card flex h-full flex-col gap-3 bg-white animate-fade-up sm:gap-4"
               style={{ animationDelay: `${index * 80}ms` }}
             >
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] bg-[var(--success-soft)] text-accent">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] bg-[var(--success-soft)] text-accent sm:h-11 sm:w-11">
                 {icons[step.icon]}
               </div>
-              <h3 className="text-2xl text-ink">{step.title}</h3>
+              <h3 className="text-xl text-ink sm:text-2xl">{step.title}</h3>
               <p className="text-sm text-muted">{step.text}</p>
             </div>
           ))}

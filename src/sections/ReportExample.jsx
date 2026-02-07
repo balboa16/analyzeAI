@@ -6,27 +6,27 @@ const reportMetrics = [
     name: "Гемоглобин",
     value: "126 г/л",
     note: "Норма",
-    tone: "success"
+    tone: "success",
   },
   {
     name: "Холестерин",
     value: "5.9 ммоль/л",
     note: "Выше нормы",
-    tone: "danger"
+    tone: "danger",
   },
   {
     name: "Витамин D",
     value: "22 нг/мл",
     note: "Ниже нормы",
-    tone: "warning"
-  }
+    tone: "warning",
+  },
 ];
 
 const bullets = [
   "Итог по здоровью без диагнозов",
   "Показатели по группам и статусам",
   "Рекомендации по питанию и привычкам",
-  "Следующий шаг: досдать или выбрать пакет"
+  "Следующий шаг: досдать или выбрать пакет",
 ];
 
 export default function ReportExample() {
@@ -36,8 +36,12 @@ export default function ReportExample() {
         <div className="card flex flex-col gap-4 bg-white">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted">Отчёт SAPATLAB</p>
-              <h3 className="mt-2 text-2xl text-ink">Как выглядит отчёт</h3>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                Отчёт SAPATLAB
+              </p>
+              <h3 className="mt-2 text-xl text-ink sm:text-2xl">
+                Как выглядит отчёт
+              </h3>
             </div>
             <span className="pill">PDF</span>
           </div>
@@ -54,7 +58,9 @@ export default function ReportExample() {
                 className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-stroke bg-white px-4 py-3"
               >
                 <div>
-                  <p className="text-sm font-semibold text-ink">{metric.name}</p>
+                  <p className="text-sm font-semibold text-ink">
+                    {metric.name}
+                  </p>
                   <p className="text-xs text-muted">{metric.value}</p>
                 </div>
                 <Badge label={metric.note} tone={metric.tone} />
@@ -70,7 +76,8 @@ export default function ReportExample() {
             </ul>
           </div>
           <p className="text-xs text-muted">
-            Информация носит справочный характер и не заменяет консультацию врача.
+            Информация носит справочный характер и не заменяет консультацию
+            врача.
           </p>
         </div>
         <div className="flex flex-col gap-6">

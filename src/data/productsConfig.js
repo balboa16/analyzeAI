@@ -1,4 +1,4 @@
-﻿export const DEFAULT_WHATSAPP_NUMBER = "996700000000";
+export const DEFAULT_WHATSAPP_NUMBER = "996700000000";
 
 export const productsConfig = [
   {
@@ -9,6 +9,7 @@ export const productsConfig = [
     duration: "15 минут",
     bullets: ["15 минут разбора", "Ответы на вопросы", "Рекомендации по шагам"],
     tag: "Популярно",
+    relatedMetrics: ["danger"],
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
     showInCards: true,
@@ -25,6 +26,7 @@ export const productsConfig = [
       "Расшифровка включена",
     ],
     tag: "Комплекс",
+    relatedMetrics: ["multiple-warnings"],
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
     showInCards: true,
@@ -37,6 +39,7 @@ export const productsConfig = [
     duration: "30 дней",
     bullets: ["Питание и привычки", "Контроль динамики", "Поддержка врача"],
     tag: "План",
+    relatedMetrics: ["warning"],
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
     showInCards: true,
@@ -49,6 +52,7 @@ export const productsConfig = [
     duration: "",
     bullets: ["Подбор по району", "Согласуем время", "Напоминание о визите"],
     tag: "Без комиссии",
+    relatedMetrics: ["general"],
     whatsapp_template:
       "Здравствуйте! Хочу {product}. Меня зовут {name}, телефон {phone}. Удобно связаться в WhatsApp: {whatsapp}. Предпочтительное время: {time}. Город: Бишкек. Источник: analyze.sapatlab.kg",
     showInCards: true,

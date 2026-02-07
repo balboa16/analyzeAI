@@ -3,19 +3,16 @@
 const testimonials = [
   {
     name: "Нурлан, 34",
-    text:
-      "Понял, почему постоянно устал. Получил рекомендации и записался к врачу за 5 минут."
+    text: "Понял, почему постоянно устал. Получил рекомендации и записался к врачу за 5 минут.",
   },
   {
     name: "Айжамал, 42",
-    text:
-      "Все объяснили простыми словами, даже маме стало понятно. Теперь наблюдаемся вместе."
+    text: "Все объяснили простыми словами, даже маме стало понятно. Теперь наблюдаемся вместе.",
   },
   {
     name: "Руслан, 29",
-    text:
-      "Удобно, что сразу предложили чекап. Никакой путаницы с анализами."
-  }
+    text: "Удобно, что сразу предложили чекап. Никакой путаницы с анализами.",
+  },
 ];
 
 const certificates = ["ISO 15189", "Минздрав КР", "KDL Partner", "HIPAA-ready"];
@@ -34,14 +31,20 @@ export default function Trust() {
             {testimonials.map((item) => (
               <div key={item.name} className="card h-full">
                 <p className="text-sm text-muted">“{item.text}”</p>
-                <p className="mt-4 text-xs font-semibold text-ink">{item.name}</p>
+                <p className="mt-4 text-xs font-semibold text-ink">
+                  {item.name}
+                </p>
               </div>
             ))}
           </div>
           <div className="card flex flex-col gap-6 bg-white">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted">Сертификаты</p>
-              <h3 className="mt-3 text-2xl text-ink">Прозрачность и контроль качества</h3>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                Сертификаты
+              </p>
+              <h3 className="mt-3 text-xl text-ink sm:text-2xl">
+                Прозрачность и контроль качества
+              </h3>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {certificates.map((item) => (

@@ -5,20 +5,20 @@ const statusMap = {
     label: "Норма",
     tone: "normal",
     text: "text-success",
-    indicator: "bg-success"
+    indicator: "bg-success",
   },
   warning: {
     label: "Погранично",
     tone: "warning",
     text: "text-warning",
-    indicator: "bg-warning"
+    indicator: "bg-warning",
   },
   danger: {
     label: "Отклонение",
     tone: "danger",
     text: "text-danger",
-    indicator: "bg-danger"
-  }
+    indicator: "bg-danger",
+  },
 };
 
 const resolveIndicatorPosition = (note, status) => {
@@ -40,15 +40,22 @@ const resolveIndicatorPosition = (note, status) => {
 
 export default function MetricCard({ metric }) {
   const status = statusMap[metric.status] || statusMap.normal;
-  const rangeLabel = metric.range ? `Норма: ${metric.range}` : "Диапазон не указан";
-  const indicatorPosition = resolveIndicatorPosition(metric.note, metric.status);
+  const rangeLabel = metric.range
+    ? `Норма: ${metric.range}`
+    : "Диапазон не указан";
+  const indicatorPosition = resolveIndicatorPosition(
+    metric.note,
+    metric.status,
+  );
   const valueText = metric.value ? metric.value : "—";
 
   return (
     <div className="card flex h-full flex-col gap-3">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-ink break-words">{metric.name}</p>
+          <p className="text-sm font-semibold text-ink break-words">
+            {metric.name}
+          </p>
           <p className="text-xs text-muted break-words">{rangeLabel}</p>
         </div>
         <div className="shrink-0">
@@ -71,13 +78,15 @@ export default function MetricCard({ metric }) {
             style={{ left: indicatorPosition }}
           />
         </div>
-        <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-muted">
+        <div className="flex justify-between text-[11px] uppercase tracking-[0.15em] text-muted">
           <span>Низко</span>
           <span>Норма</span>
           <span>Высоко</span>
         </div>
       </div>
-      <p className={`text-xs ${status.text}`}>{metric.note || "См. комментарий"}</p>
+      <p className={`text-xs ${status.text}`}>
+        {metric.note || "См. комментарий"}
+      </p>
     </div>
   );
 }
